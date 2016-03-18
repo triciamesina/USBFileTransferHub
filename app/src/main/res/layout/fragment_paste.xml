@@ -35,7 +35,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toStartOf="@+id/chooseButton"
+        android:layout_toLeftOf="@+id/chooseButton" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,8 +48,10 @@
             android:textColor="@color/white"
             android:theme="@style/MyButton"
             android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/destTextView"
-            android:layout_alignEnd="@+id/destTextView" />
+            android:layout_alignLeft="@+id/addButton"
+            android:layout_alignStart="@+id/addButton"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,31 +59,20 @@
         android:id="@+id/selectedFile"
         style="@style/TextAppearance.AppCompat.Headline"
         android:textStyle="bold"
+        android:text="Select a file"
         android:layout_marginLeft="10dp"
-        android:layout_above="@+id/destTextView"/>
+        android:layout_above="@+id/destLabel" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Destinations: "
+        android:text="Choose destinations"
         android:id="@+id/destLabel"
         android:textStyle="italic"
         android:layout_above="@+id/addDestButton"
         android:layout_alignLeft="@+id/selectedFile"
         android:layout_alignStart="@+id/selectedFile" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/destTextView"
-        android:gravity="right"
-        android:textAlignment="gravity"
-        android:layout_toRightOf="@+id/destLabel"
-        android:layout_above="@+id/addButton"
-        android:layout_alignRight="@+id/addButton"
-        android:layout_alignEnd="@+id/addButton" />
 
     <Button
         android:layout_width="wrap_content"
@@ -109,6 +103,28 @@
         android:layout_alignLeft="@+id/spinner"
         android:layout_alignStart="@+id/spinner"
         style="@style/Base.Widget.AppCompat.Button.Borderless" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/desttextView2"
+        android:textStyle="italic"
+        android:layout_above="@+id/addDestButton"
+        android:layout_toRightOf="@+id/destLabel"
+        android:layout_toEndOf="@+id/destLabel" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/desttextView3"
+        android:textStyle="italic"
+        android:layout_above="@+id/addDestButton"
+        android:layout_toRightOf="@+id/desttextView2"
+        android:layout_toEndOf="@+id/desttextView2" />
 </RelativeLayout>
 
     </LinearLayout>

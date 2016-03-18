@@ -20,6 +20,7 @@ public class DestinationFragment extends DialogFragment {
     // Add list of items
     final CharSequence usblist[] = new CharSequence[]{"USB1", "USB2", "USB3", "USB4"};
     String dest;
+    public static int DESTINATION_FRAGMENT = 2;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -41,6 +42,8 @@ public class DestinationFragment extends DialogFragment {
                 Toast.makeText(getActivity(), dest + "selected", Toast.LENGTH_SHORT).show();
                 Bundle dst = new Bundle();
                 dst.putString("destination", dest);
+                MainActivity main = (MainActivity) getActivity();
+                main.saveData(DESTINATION_FRAGMENT, dst);
                 PasteFragment fragment = new PasteFragment();
                 getFragmentManager().beginTransaction().
                         replace(R.id.fragment_container, fragment).commit();

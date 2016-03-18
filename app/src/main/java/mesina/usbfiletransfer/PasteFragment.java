@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,7 +27,6 @@ import java.util.ArrayList;
 
 public class PasteFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
     private Spinner spinner;
     View.OnClickListener mOnClickListener;
     RecyclerView.LayoutManager layoutManager;
@@ -35,6 +38,9 @@ public class PasteFragment extends Fragment {
     final String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
     final String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
     final String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
+    int src;
+    String data;
+    private static Bundle mRecyclerViewState;
 
     public PasteFragment() {
         // Required empty public constructor
@@ -50,27 +56,19 @@ public class PasteFragment extends Fragment {
 
         selection selectionList = new selection("Selected Files", "Destination");
         arrayList.add(selectionList);
-/*
-        // Setup Recycler View
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.selectionRecyclerView);
-        mAdapter = new RecyclerAdapter(arrayList);
-        recyclerView.setAdapter(mAdapter);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        recyclerView.addItemDecoration(itemDecoration);
-*/
-
+        ((MainActivity) getActivity()).setActionBarTitle("Paste Files");
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        String selectedFile = null, dest = null;
+        int count;
+        MainActivity main = (MainActivity) getActivity();
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_paste, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_paste, container, false);
 
         // Setup Spinner
         spinner = (Spinner) rootView.findViewById(R.id.spinner);
@@ -78,14 +76,21 @@ public class PasteFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int source = parent.getSelectedItemPosition();
-                switch(source) {
+                switch (source) {
                     case 0:
-                        dirfiles = filesList;
+                        src = 0;
+                        dirfiles = null;
                         break;
                     case 1:
+                        src = 1;
+                        dirfiles = filesList;
+                        break;
+                    case 2:
+                        src = 2;
                         dirfiles = filesList2;
                         break;
                     default:
+                        src = 3;
                         dirfiles = usb2;
                         break;
                 }
@@ -102,26 +107,37 @@ public class PasteFragment extends Fragment {
         final Button chooseButton = (Button) rootView.findViewById(R.id.chooseButton);
         String selected = null;
         assert chooseButton != null;
-        chooseButton.setOnClickListener(new View.OnClickListener() {
-            @Nullable
-            @Override
-            public void onClick(View v) {
-                if (arrayList.size() < 10) {
-                    Bundle args = new Bundle();
-                    args.putStringArray("directory", dirfiles);
-                    if (args == null) {
-                        Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
+        Bundle args = new Bundle();
+        args = this.getArguments();
+        if (args != null) {
+            chooseButton.setClickable(false);
+        } else {
+            chooseButton.setOnClickListener(new View.OnClickListener() {
+                @Nullable
+                @Override
+                public void onClick(View v) {
+                    if (arrayList.size() < 15) {
+                        Bundle args = new Bundle();
+                        args.putStringArray("directory", dirfiles);
+                        if (src != 0) {
+                            if (args == null) {
+                                Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
+                            } else {
+                                ChooseFragment directoryFragment = new ChooseFragment();
+                                directoryFragment.setArguments(args);
+                                FragmentManager fm = getFragmentManager();
+                                fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
+                                chooseButton.setClickable(false);
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        ChooseFragment directoryFragment = new ChooseFragment();
-                        directoryFragment.setArguments(args);
-                        FragmentManager fm = getFragmentManager();
-                        fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
+                        Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
+        }
 
         // Setup Destination Button
         final Button destButton = (Button) rootView.findViewById(R.id.addDestButton);
@@ -148,29 +164,49 @@ public class PasteFragment extends Fragment {
         }
 
         // Setup Selected Text Label
-        TextView selectLabel = (TextView) rootView.findViewById(R.id.selectedFile);
-        Bundle select = this.getArguments();
-        if (select == null) {
-            selectLabel.setText("Select a file");
-        } else {
-            String selectedFile = select.getString("selected");
+        final TextView selectLabel = (TextView) rootView.findViewById(R.id.selectedFile);
+        //  Bundle select = this.getArguments();
+        // Setup Destination Text Label
+        final TextView destLabel = (TextView) rootView.findViewById(R.id.destLabel);
+        Bundle select = main.getSavedData();
+        selectedFile = select.getString("selected");
+        dest = select.getString("destination");
+        if (selectedFile != null) {
             selectLabel.setText(selectedFile);
+
+            destLabel.setText("Choose destinations");
         }
 
-        // Setup Destination Text Label
-        TextView destLabel = (TextView) rootView.findViewById(R.id.destTextView);
-        if (select == null) {
-            destLabel.setText("none selected");
-        } else {
-            String dest = select.getString("destination");
+        if (dest == null) {
+            destLabel.setText("Choose destinations");
+        } else if (dest != null) {
             destLabel.setText(dest);
         }
+
+        // Setup Add Button
+        final Button addButton = (Button) rootView.findViewById(R.id.addButton);
+        assert destButton != null;
+        final String finalSelectedFile = selectedFile;
+        final String finalDest = dest;
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Nullable
+            @Override
+            public void onClick(View v) {
+                if (finalSelectedFile == null || finalDest == null) {
+                    Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
+                    arrayList.add(new selection(finalSelectedFile, finalDest));
+                    mAdapter.notifyItemInserted(arrayList.size());
+                    selectLabel.setText("Select a file");
+                    destLabel.setText("Choose destinations");
+                    chooseButton.setClickable(true);
+                    addButton.setClickable(false);
+                }
+            }
+        });
 
         return rootView;
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

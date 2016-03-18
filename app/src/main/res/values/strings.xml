@@ -4,8 +4,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_back">Home</string>
     <string-array name="usb_list">
+        <item>Choose Source</item>
         <item>USB1</item>
         <item>USB2</item>
         <item>USB3</item>
@@ -13,4 +15,5 @@
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_home">HomeActivity</string>
 </resources>

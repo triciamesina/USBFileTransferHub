@@ -25,7 +25,7 @@ public class ChooseFragment extends Fragment {
     private ArrayList<String> dirFiles = new ArrayList<>();
     private RecyclerView recyclerView;
     private DirectoryAdapter mAdapter;
-
+    public static int CHOOSE_FRAGMENT = 1;
     public ChooseFragment() {
         // Required empty public constructor
     }
@@ -63,6 +63,9 @@ public class ChooseFragment extends Fragment {
                     Toast.makeText(getActivity(), selectedFile + "selected", Toast.LENGTH_SHORT).show();
                     Bundle extras = new Bundle();
                     extras.putString("selected", selectedFile);
+                    extras.putString("destination", "Choose destinations");
+                    MainActivity main = (MainActivity) getActivity();
+                    main.saveData(CHOOSE_FRAGMENT, extras);
                     PasteFragment fragment = new PasteFragment();
                     fragment.setArguments(extras);
                     getFragmentManager().beginTransaction().
