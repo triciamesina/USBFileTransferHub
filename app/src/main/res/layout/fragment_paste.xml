@@ -1,0 +1,116 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    tools:context="mesina.usbfiletransfer.PasteFragment">
+
+    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_send"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="362dp"
+        android:id="@+id/selectionRecyclerView"
+        android:clickable="true"
+        android:divider="@color/divider"
+        android:dividerHeight="2px"
+        android:background="#ffffff"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="152dp"
+        android:layout_gravity="center_horizontal|top">
+<RelativeLayout android:layout_height="match_parent" android:layout_width="match_parent">
+    <Spinner
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:spinnerMode="dropdown"
+        android:entries="@array/usb_list"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Files"
+            android:id="@+id/chooseButton"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:theme="@style/MyButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/destTextView"
+            android:layout_alignEnd="@+id/destTextView" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/selectedFile"
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        android:layout_above="@+id/destTextView"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Destinations: "
+        android:id="@+id/destLabel"
+        android:textStyle="italic"
+        android:layout_above="@+id/addDestButton"
+        android:layout_alignLeft="@+id/selectedFile"
+        android:layout_alignStart="@+id/selectedFile" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/destTextView"
+        android:gravity="right"
+        android:textAlignment="gravity"
+        android:layout_toRightOf="@+id/destLabel"
+        android:layout_above="@+id/addButton"
+        android:layout_alignRight="@+id/addButton"
+        android:layout_alignEnd="@+id/addButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add to list"
+        android:id="@+id/addButton"
+        android:clickable="true"
+        android:layout_marginRight="38dp"
+        android:layout_marginEnd="43dp"
+        android:textColor="@color/colorAccent"
+        android:theme="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_alignTop="@+id/addDestButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="right"
+        style="@style/Base.Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Destination"
+        android:id="@+id/addDestButton"
+        android:clickable="true"
+        android:theme="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_marginLeft="35dp"
+        android:layout_marginStart="33dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/spinner"
+        android:layout_alignStart="@+id/spinner"
+        style="@style/Base.Widget.AppCompat.Button.Borderless" />
+</RelativeLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

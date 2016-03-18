@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_paste"
+            android:icon="@drawable/ic_content_copy"
+            android:title="Paste" />
+        <item
+            android:id="@+id/nav_move"
+            android:icon="@drawable/ic_content_cut"
+            android:title="Move" />
+        <item
+            android:id="@+id/nav_delete"
+            android:icon="@drawable/ic_delete"
+            android:title="Delete" />
+        <item
+            android:id="@+id/nav_rename"
+            android:icon="@drawable/ic_create"
+            android:title="Rename" />
+    </group>
+
+</menu>
