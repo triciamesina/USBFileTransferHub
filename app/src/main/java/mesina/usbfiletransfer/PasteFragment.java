@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,12 +73,12 @@ public class PasteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        int count = 0;
+        final int[] count = {0};
         final MainActivity main = (MainActivity) getActivity();
         Bundle fromFragments = this.getArguments();
         // Number of destinations
         if (fromFragments != null) {
-            count = fromFragments.getInt("count");
+            count[0] = fromFragments.getInt("count");
         }
 
         // Inflate the layout for this fragment
@@ -151,20 +153,24 @@ public class PasteFragment extends Fragment {
         // Setup Destination Button
         final Button destButton = (Button) rootView.findViewById(R.id.addDestButton);
         assert destButton != null;
-        final int finalCount = count;
+        final int finalCount = count[0];
         destButton.setOnClickListener(new View.OnClickListener() {
             @Nullable
             @Override
             public void onClick(View v) {
-                if (finalCount == 1 || finalCount == 2 || finalCount == 0) {
-                    Bundle destCount = new Bundle();
-                    destCount.putInt("count", finalCount);
-                    DestinationFragment chooseDest = new DestinationFragment();
-                    chooseDest.setArguments(destCount);
-                 //   Toast.makeText(getActivity(), "sent "+finalCount, Toast.LENGTH_SHORT).show();
-                    chooseDest.show(getFragmentManager(), "destinationDialog");
+                if (selectedFile == " ") {
+                    Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "Maximum number of destinations exceeded", Toast.LENGTH_SHORT).show();
+                    if (finalCount == 1 || finalCount == 2 || finalCount == 0) {
+                        Bundle destCount = new Bundle();
+                        destCount.putInt("count", finalCount);
+                        DestinationFragment chooseDest = new DestinationFragment();
+                        chooseDest.setArguments(destCount);
+                        //   Toast.makeText(getActivity(), "sent "+finalCount, Toast.LENGTH_SHORT).show();
+                        chooseDest.show(getFragmentManager(), "destinationDialog");
+                    } else {
+                        Toast.makeText(getActivity(), "Maximum number of destinations exceeded", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -220,7 +226,7 @@ public class PasteFragment extends Fragment {
             @Nullable
             @Override
             public void onClick(View v) {
-                if (finalSelectedFile == null || finalDest == null) {
+                if (finalSelectedFile == null || dest1 == " ") {
                     Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
@@ -233,9 +239,28 @@ public class PasteFragment extends Fragment {
                     destLabel3.setText(" ");
                     Bundle reset = new Bundle();
                     reset.putString("selected", "");
-                    main.addToList(addtolist);
+                  //  main.addToList(addtolist);
                     main.resetData();
                 }
+            }
+        });
+
+        // Setup Floating Action Button
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "Proceed?", Snackbar.LENGTH_LONG).setAction("Yes", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int size = arrayList.size();
+                        if (size <= 1) {
+                            Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).show();
             }
         });
 

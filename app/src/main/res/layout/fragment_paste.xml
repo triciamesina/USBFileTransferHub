@@ -114,7 +114,7 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
@@ -131,6 +131,6 @@
         android:dividerHeight="2px"
         android:background="#ffffff"
         android:layout_gravity="center_horizontal|bottom" />
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
 
 </LinearLayout>
