@@ -31,19 +31,13 @@ public class PasteFragment extends Fragment {
 
 
     public static int PASTE_FRAGMENT = 0;
-    private Spinner spinner;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<selection> arrayList;
     String[] dirfiles;
     RecyclerView recyclerView;
     RecyclerAdapter mAdapter;
-    final String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
-    final String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
-    final String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
     int src;
     String selectedFile, dest1, dest2, dest3;
-    MainActivity main = (MainActivity) getActivity();
-    Bundle fromFragments = this.getArguments();
 
     public PasteFragment() {
         // Required empty public constructor
@@ -58,9 +52,11 @@ public class PasteFragment extends Fragment {
         String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
         MainActivity main = (MainActivity) getActivity();
         Bundle fromActivity = main.getSavedData();
+        Bundle fromHome = this.getArguments();
+        String title = fromHome.getString("title");
         arrayList = fromActivity.getParcelableArrayList("list");
         Bundle destinations = main.getDestinations();
-        main.setActionBarTitle("Paste Files");
+        main.setActionBarTitle(title);
         if (destinations != null) {
             dest1 = destinations.getString("dest1");
             dest2 = destinations.getString("dest2");
@@ -73,19 +69,19 @@ public class PasteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final int[] count = {0};
+        int count = 0;
         final MainActivity main = (MainActivity) getActivity();
         Bundle fromFragments = this.getArguments();
         // Number of destinations
         if (fromFragments != null) {
-            count[0] = fromFragments.getInt("count");
+            count = fromFragments.getInt("count");
         }
 
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_paste, container, false);
 
         // Setup Spinner
-        spinner = (Spinner) rootView.findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -139,7 +135,7 @@ public class PasteFragment extends Fragment {
                                     ChooseFragment directoryFragment = new ChooseFragment();
                                     directoryFragment.setArguments(args);
                                     FragmentManager fm = getFragmentManager();
-                                    fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).addToBackStack(null).commit();
+                                    fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
@@ -153,7 +149,7 @@ public class PasteFragment extends Fragment {
         // Setup Destination Button
         final Button destButton = (Button) rootView.findViewById(R.id.addDestButton);
         assert destButton != null;
-        final int finalCount = count[0];
+        final int finalCount = count;
         destButton.setOnClickListener(new View.OnClickListener() {
             @Nullable
             @Override
@@ -258,6 +254,9 @@ public class PasteFragment extends Fragment {
                             Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                            MainFragment home = new MainFragment();
+                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                            main.arrayList.clear();
                         }
                     }
                 }).show();

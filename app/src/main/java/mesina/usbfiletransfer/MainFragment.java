@@ -35,7 +35,26 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                Bundle title = new Bundle();
+                title.putString("title", "Paste files");
                 PasteFragment fragment = new PasteFragment();
+                fragment.setArguments(title);
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            }
+        });
+
+        // Move Button
+        Button moveButton = (Button) rootView.findViewById(R.id.moveButton);
+        assert moveButton != null;
+        moveButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Bundle title = new Bundle();
+                title.putString("title", "Move files");
+                PasteFragment fragment = new PasteFragment();
+                fragment.setArguments(title);
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
             }
