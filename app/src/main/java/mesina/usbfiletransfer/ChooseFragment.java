@@ -25,7 +25,8 @@ public class ChooseFragment extends Fragment {
     private ArrayList<String> dirFiles = new ArrayList<>();
     private RecyclerView recyclerView;
     private DirectoryAdapter mAdapter;
-    public static int CHOOSE_FRAGMENT = 1;
+    public static int PASTE_FRAGMENT = 0;
+    public static int DELETE_FRAGMENT = 1;
 
     public ChooseFragment() {
         // Required empty public constructor
@@ -39,8 +40,11 @@ public class ChooseFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_choose, container, false);
 
         String[] filesList;
+        final int ope; // operation chosen
         Bundle extras = this.getArguments();
+        ope = extras.getInt("ope");
         filesList = extras.getStringArray("directory");
+      //  Toast.makeText(getActivity(), "operation" + ope, Toast.LENGTH_SHORT).show();
         if (filesList != null) {
             final ArrayList<String> dirFiles = new ArrayList<String>(Arrays.asList(filesList));
 
@@ -63,13 +67,23 @@ public class ChooseFragment extends Fragment {
                     String selectedFile = dirFiles.get(position);
                     Toast.makeText(getActivity(), selectedFile + " selected", Toast.LENGTH_SHORT).show();
                     Bundle extras = new Bundle();
-                    extras.putString("selected", selectedFile);
                     MainActivity main = (MainActivity) getActivity();
-                    main.saveData("selected", extras);
-                    PasteFragment fragment = new PasteFragment();
-                   // fragment.setArguments(extras);
-                    getFragmentManager().beginTransaction().
-                            replace(R.id.fragment_container, fragment).commit();
+                    switch (ope) {
+                        case 0: // paste/move operation
+                            extras.putString("selected", selectedFile);
+                            main.saveData("selected", extras);
+                            PasteFragment fragment = new PasteFragment();
+                            // fragment.setArguments(extras);
+                            getFragmentManager().beginTransaction().
+                                    replace(R.id.fragment_container, fragment).commit();
+                            break;
+                        case 1: // delete operation
+                            extras.putString("delete", selectedFile);
+                            main.saveData("delete", extras);
+                            DeleteFragment deleteFragment = new DeleteFragment();
+                            getFragmentManager().beginTransaction().
+                                    replace(R.id.fragment_container, deleteFragment).commit();
+                    }
                 }
             }));
         }

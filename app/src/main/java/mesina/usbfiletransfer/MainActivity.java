@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     String dest3 = " ";
     int src = 0;
     ArrayList<selection> arrayList = new ArrayList<>();
+    ArrayList<String> deleteList = new ArrayList<>();
     public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
             dest2 = " ";
             dest3 = " ";
 
+        } else if (id == "delete") {
+            deleteList.add(data.getString("delete"));
         }
     }
 
@@ -126,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
         Bundle data = new Bundle();
         data.putParcelableArrayList("list", arrayList);
         return data;
+    }
+
+    public ArrayList<String> getDeleteList () {
+        return deleteList;
     }
 
     public String getSelectedFile() {
@@ -158,5 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 return usb2;
         }
     }
+
+
 
 }

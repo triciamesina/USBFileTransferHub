@@ -1,15 +1,194 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@drawable/low_poly_8"
+    android:weightSum="1"
     tools:context="mesina.usbfiletransfer.MainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-    <include layout="@layout/buttons_main"/>
-    <include layout="@layout/content_main"/>
+        android:layout_height="140dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="USB File Transfer Hub"
+            android:id="@+id/textView"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Start Transferring"
+            android:id="@+id/textView2"
+            android:layout_gravity="center"
+            android:textStyle="italic"
+            android:textColor="#ffffff"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="#a6fFFFFF"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:id="@+id/pasteLayout"
+            android:onClick="onClick">
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/pasteButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android.support.design:fabSize="mini"
+                android:src="@drawable/ic_content_copy"
+                android:layout_gravity="center_horizontal"
+                android.support.design:backgroundTint ="@color/colorPrimary"
+                android:layout_marginLeft="75dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="75dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Paste files"
+                android:id="@+id/pasteLabel"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/pasteButton"
+                android:layout_toEndOf="@+id/pasteButton" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:id="@+id/moveLayout"
+            android:onClick="onClick">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Move files"
+                android:id="@+id/moveLabel"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/moveButton"
+                android:layout_toEndOf="@+id/moveButton"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp" />
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/moveButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:src="@drawable/ic_content_cut"
+                android.support.design:fabSize="mini"
+                android.support.design:backgroundTint ="@color/colorPrimary"
+                android:layout_marginLeft="75dp"
+                android:layout_marginStart="75dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:id="@+id/deleteLayout">
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/deleteButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android.support.design:fabSize="mini"
+                android:src="@drawable/ic_delete"
+                android:layout_gravity="center_horizontal"
+                android.support.design:backgroundTint ="@color/colorPrimary"
+                android:layout_marginLeft="75dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="75dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Delete files"
+                android:id="@+id/deleteLabel"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/deleteButton"
+                android:layout_toRightOf="@id/deleteButton"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:layout_below="@+id/moveButton"
+            android:layout_alignLeft="@+id/moveButton"
+            android:layout_alignStart="@+id/moveButton"
+            android:id="@+id/renameLayout"
+            android:onClick="onClick">
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/renameButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android.support.design:fabSize="mini"
+                android:src="@drawable/ic_create"
+                android:layout_gravity="center_horizontal"
+                android.support.design:backgroundTint ="@color/colorPrimary"
+                android:layout_marginLeft="75dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="75dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Rename file"
+                android:id="@+id/renameLabel"
+                android:layout_toRightOf="@id/renameButton"
+                android:layout_toEndOf="@id/renameButton"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -131,6 +131,7 @@ public class PasteFragment extends Fragment {
                                 } else {
                                     Bundle source = new Bundle();
                                     source.putInt("src", src);
+                                    args.putInt("ope", PASTE_FRAGMENT);
                                     main.saveData("source", source);
                                     ChooseFragment directoryFragment = new ChooseFragment();
                                     directoryFragment.setArguments(args);
