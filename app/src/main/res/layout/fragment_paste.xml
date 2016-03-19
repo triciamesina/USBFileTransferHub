@@ -1,31 +1,16 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:layout_marginTop="?attr/actionBarSize"
     tools:context="mesina.usbfiletransfer.PasteFragment">
-
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_send"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="362dp"
-        android:id="@+id/selectionRecyclerView"
-        android:clickable="true"
-        android:divider="@color/divider"
-        android:dividerHeight="2px"
-        android:background="#ffffff"
-        android:layout_gravity="center_horizontal|bottom" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="152dp"
-        android:layout_gravity="center_horizontal|top">
-<RelativeLayout android:layout_height="match_parent" android:layout_width="match_parent">
+        android:layout_height="152dp">
+<RelativeLayout android:layout_height="match_parent" android:layout_width="match_parent" android:id="@+id/contents">
     <Spinner
         android:layout_width="124dp"
         android:layout_height="wrap_content"
@@ -58,10 +43,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/selectedFile"
         style="@style/TextAppearance.AppCompat.Headline"
-        android:textStyle="bold"
         android:text="Select a file"
         android:layout_marginLeft="10dp"
-        android:layout_above="@+id/destLabel" />
+        android:layout_above="@+id/destLabel"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -129,4 +114,23 @@
 
     </LinearLayout>
 
+    <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_send"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="362dp"
+        android:id="@+id/selectionRecyclerView"
+        android:clickable="true"
+        android:divider="@color/divider"
+        android:dividerHeight="2px"
+        android:background="#ffffff"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>
+
+</LinearLayout>

@@ -9,11 +9,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    String selectedFile, dest1, dest2, dest3;
+    String selectedFile = " ";
+    String dest1 = " ";
+    String dest2 = " ";
+    String dest3 = " ";
+    int src = 0;
+    ArrayList<selection> arrayList = new ArrayList<>();
+    public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
+    final String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
+    final String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
+    final String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
 
 
     @Override
@@ -27,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         MainFragment fragment = new MainFragment();
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
-
+        selection initial = new selection("Selected files", "Destinations");
+        arrayList.add(initial);
 
     }
 
@@ -69,14 +81,42 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
     }
 
-    public void saveData(int id, Bundle data) {
+    // Select new item reinitialize values
+    public void resetData() {
+        selectedFile = " ";
+        dest1 = " ";
+        dest2 = " ";
+        dest3 = " ";
+    }
+
+    // Add item to selection list
+    public void addToList(selection added) {
+        arrayList.add(added);
+    }
+
+    public void saveData(String id, Bundle data) {
         // based on the id you'll know which fragment is trying to save data(see below)
         // the Bundle will hold the data
 
-        if(id == CHOOSE_FRAGMENT) { // from choosefragment
+        if(id == "selected") { // selected file
             selectedFile = data.getString("selected");
-        } else if (id == DESTINATION_FRAGMENT) { // from destination fragment
-            dest1 = data.getString("destination");
+        } else if (id == "source") {
+            src = data.getInt("src");
+        } else if (id == "dest1") { // from destination fragment
+            dest1 = data.getString("dest1");
+        } else if (id == "dest2") {
+            dest2 = data.getString("dest2");
+        } else if (id == "dest3") {
+            dest3 = data.getString("dest3");
+        } else if (id == "list") {
+            arrayList = data.getParcelableArrayList("list");
+        } else if (id == "reset") {
+
+            selectedFile = " ";
+            dest1 = " ";
+            dest2 = " ";
+            dest3 = " ";
+
         }
     }
 
@@ -84,9 +124,39 @@ public class MainActivity extends AppCompatActivity {
         // here you'll save the data previously retrieved from the fragments and
         // return it in a Bundle
         Bundle data = new Bundle();
-        data.putString("selected", selectedFile);
-        data.putString("destination", dest1);
+        data.putParcelableArrayList("list", arrayList);
         return data;
+    }
+
+    public String getSelectedFile() {
+        String selected = selectedFile;
+        return selected;
+    }
+
+    public int getSource() {
+        return src;
+    }
+
+    public Bundle getDestinations() {
+
+        Bundle data = new Bundle();
+        data.putString("dest1", dest1);
+        data.putString("dest2", dest2);
+        data.putString("dest3", dest3);
+        return data;
+    }
+
+    public String[] getDirectory(int source) {
+        switch (source){
+            case 1:
+                return filesList;
+            case 2:
+                return filesList2;
+            case 3:
+                return usb2;
+            default:
+                return usb2;
+        }
     }
 
 }

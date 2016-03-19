@@ -32,6 +32,5 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/destination"
-        android:textStyle="italic"
-        />
+        android:textStyle="italic" />
 </LinearLayout>

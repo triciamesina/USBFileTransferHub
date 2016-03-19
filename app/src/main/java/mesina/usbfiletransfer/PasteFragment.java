@@ -27,11 +27,11 @@ import java.util.ArrayList;
 
 public class PasteFragment extends Fragment {
 
+
+    public static int PASTE_FRAGMENT = 0;
     private Spinner spinner;
-    View.OnClickListener mOnClickListener;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<selection> arrayList = new ArrayList<>();
-    SharedPreferences sharedPref;
+    ArrayList<selection> arrayList;
     String[] dirfiles;
     RecyclerView recyclerView;
     RecyclerAdapter mAdapter;
@@ -39,8 +39,9 @@ public class PasteFragment extends Fragment {
     final String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
     final String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
     int src;
-    String data;
-    private static Bundle mRecyclerViewState;
+    String selectedFile, dest1, dest2, dest3;
+    MainActivity main = (MainActivity) getActivity();
+    Bundle fromFragments = this.getArguments();
 
     public PasteFragment() {
         // Required empty public constructor
@@ -53,20 +54,31 @@ public class PasteFragment extends Fragment {
         String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
         String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
         String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
-
-        selection selectionList = new selection("Selected Files", "Destination");
-        arrayList.add(selectionList);
-        ((MainActivity) getActivity()).setActionBarTitle("Paste Files");
+        MainActivity main = (MainActivity) getActivity();
+        Bundle fromActivity = main.getSavedData();
+        arrayList = fromActivity.getParcelableArrayList("list");
+        Bundle destinations = main.getDestinations();
+        main.setActionBarTitle("Paste Files");
+        if (destinations != null) {
+            dest1 = destinations.getString("dest1");
+            dest2 = destinations.getString("dest2");
+            dest3 = destinations.getString("dest3");
+        }
+        selectedFile = main.getSelectedFile();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String selectedFile = null, dest = null;
-        int count;
-        MainActivity main = (MainActivity) getActivity();
+        int count = 0;
+        final MainActivity main = (MainActivity) getActivity();
+        Bundle fromFragments = this.getArguments();
+        // Number of destinations
+        if (fromFragments != null) {
+            count = fromFragments.getInt("count");
+        }
+
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_paste, container, false);
 
@@ -77,21 +89,23 @@ public class PasteFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int source = parent.getSelectedItemPosition();
                 switch (source) {
-                    case 0:
-                        src = 0;
-                        dirfiles = null;
-                        break;
                     case 1:
                         src = 1;
-                        dirfiles = filesList;
+                        dirfiles = main.getDirectory(src);
                         break;
                     case 2:
                         src = 2;
-                        dirfiles = filesList2;
+                        dirfiles = main.getDirectory(src);
+                        break;
+                    case 3:
+                        src = 3;
+                        dirfiles = main.getDirectory(src);
+                        break;
+                    case 4:
+                        src = 4;
+                        dirfiles = main.getDirectory(src);
                         break;
                     default:
-                        src = 3;
-                        dirfiles = usb2;
                         break;
                 }
             }
@@ -105,52 +119,58 @@ public class PasteFragment extends Fragment {
 
         // Setup Choose Button
         final Button chooseButton = (Button) rootView.findViewById(R.id.chooseButton);
-        String selected = null;
         assert chooseButton != null;
-        Bundle args = new Bundle();
-        args = this.getArguments();
-        if (args != null) {
-            chooseButton.setClickable(false);
-        } else {
-            chooseButton.setOnClickListener(new View.OnClickListener() {
-                @Nullable
-                @Override
-                public void onClick(View v) {
-                    if (arrayList.size() < 15) {
-                        Bundle args = new Bundle();
-                        args.putStringArray("directory", dirfiles);
-                        if (src != 0) {
-                            if (args == null) {
-                                Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
+                chooseButton.setOnClickListener(new View.OnClickListener() {
+                    @Nullable
+                    @Override
+                    public void onClick(View v) {
+                        if (arrayList.size() < 15) {
+                            Bundle args = new Bundle();
+                            args.putStringArray("directory", dirfiles);
+                            if (src != 0) {
+                                if (args == null) {
+                                    Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Bundle source = new Bundle();
+                                    source.putInt("src", src);
+                                    main.saveData("source", source);
+                                    ChooseFragment directoryFragment = new ChooseFragment();
+                                    directoryFragment.setArguments(args);
+                                    FragmentManager fm = getFragmentManager();
+                                    fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).addToBackStack(null).commit();
+                                }
                             } else {
-                                ChooseFragment directoryFragment = new ChooseFragment();
-                                directoryFragment.setArguments(args);
-                                FragmentManager fm = getFragmentManager();
-                                fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
-                                chooseButton.setClickable(false);
+                                Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
-        }
+                });
 
         // Setup Destination Button
         final Button destButton = (Button) rootView.findViewById(R.id.addDestButton);
         assert destButton != null;
+        final int finalCount = count;
         destButton.setOnClickListener(new View.OnClickListener() {
             @Nullable
             @Override
             public void onClick(View v) {
-                DestinationFragment chooseDest = new DestinationFragment();
-                chooseDest.show(getFragmentManager(), "destinationDialog");
+                if (finalCount == 1 || finalCount == 2 || finalCount == 0) {
+                    Bundle destCount = new Bundle();
+                    destCount.putInt("count", finalCount);
+                    DestinationFragment chooseDest = new DestinationFragment();
+                    chooseDest.setArguments(destCount);
+                 //   Toast.makeText(getActivity(), "sent "+finalCount, Toast.LENGTH_SHORT).show();
+                    chooseDest.show(getFragmentManager(), "destinationDialog");
+                } else {
+                    Toast.makeText(getActivity(), "Maximum number of destinations exceeded", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
+
+        // Setup recycler view
         recyclerView = (RecyclerView) rootView.findViewById(R.id.selectionRecyclerView);
         mAdapter = new RecyclerAdapter(arrayList);
         if (recyclerView != null) {
@@ -167,27 +187,35 @@ public class PasteFragment extends Fragment {
         final TextView selectLabel = (TextView) rootView.findViewById(R.id.selectedFile);
         //  Bundle select = this.getArguments();
         // Setup Destination Text Label
-        final TextView destLabel = (TextView) rootView.findViewById(R.id.destLabel);
-        Bundle select = main.getSavedData();
-        selectedFile = select.getString("selected");
-        dest = select.getString("destination");
-        if (selectedFile != null) {
-            selectLabel.setText(selectedFile);
+        final TextView destLabel1 = (TextView) rootView.findViewById(R.id.destLabel);
+        final TextView destLabel2 = (TextView) rootView.findViewById(R.id.desttextView2);
+        final TextView destLabel3 = (TextView) rootView.findViewById(R.id.desttextView3);
 
-            destLabel.setText("Choose destinations");
+        if (selectedFile != " ") {
+            selectLabel.setText(selectedFile);
         }
 
-        if (dest == null) {
-            destLabel.setText("Choose destinations");
-        } else if (dest != null) {
-            destLabel.setText(dest);
+        if (dest1 == " ") {
+            destLabel1.setText("Choose destinations");
+        } else if (dest1 != " ") {
+            destLabel1.setText(dest1);
+        }
+        if (dest2 != " ") {
+            destLabel2.setText(dest2);
+        } else {
+            dest2 = " ";
+        }
+        if (dest3 != " ") {
+            destLabel3.setText(dest3);
+        } else {
+            dest3 = " ";
         }
 
         // Setup Add Button
         final Button addButton = (Button) rootView.findViewById(R.id.addButton);
         assert destButton != null;
         final String finalSelectedFile = selectedFile;
-        final String finalDest = dest;
+        final String finalDest = dest1 + dest2 + dest3;
         addButton.setOnClickListener(new View.OnClickListener() {
             @Nullable
             @Override
@@ -196,12 +224,17 @@ public class PasteFragment extends Fragment {
                     Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
-                    arrayList.add(new selection(finalSelectedFile, finalDest));
+                    selection addtolist = new selection(finalSelectedFile, finalDest);
+                    arrayList.add(addtolist);
                     mAdapter.notifyItemInserted(arrayList.size());
                     selectLabel.setText("Select a file");
-                    destLabel.setText("Choose destinations");
-                    chooseButton.setClickable(true);
-                    addButton.setClickable(false);
+                    destLabel1.setText("Choose destinations");
+                    destLabel2.setText(" ");
+                    destLabel3.setText(" ");
+                    Bundle reset = new Bundle();
+                    reset.putString("selected", "");
+                    main.addToList(addtolist);
+                    main.resetData();
                 }
             }
         });
@@ -209,4 +242,10 @@ public class PasteFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("list", arrayList);
+        outState.putString("destination", dest1);
+    }
 }

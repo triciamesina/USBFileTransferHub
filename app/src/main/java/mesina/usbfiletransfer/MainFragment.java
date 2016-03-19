@@ -41,6 +41,19 @@ public class MainFragment extends Fragment {
             }
         });
 
+        // Delete Button
+        Button deleteButton = (Button) rootView.findViewById(R.id.deleteButton);
+        assert deleteButton != null;
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                DeleteFragment fragment = new DeleteFragment();
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            }
+        });
+
 
         return rootView;
 
