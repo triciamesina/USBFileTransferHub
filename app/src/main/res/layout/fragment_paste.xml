@@ -32,11 +32,11 @@
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:theme="@style/MyButton"
-            android:layout_alignParentTop="true"
-            android:layout_alignLeft="@+id/addButton"
-            android:layout_alignStart="@+id/addButton"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp" />
+            android:layout_marginLeft="54dp"
+            android:layout_alignTop="@+id/spinner"
+            android:layout_toRightOf="@+id/addDestButton"
+            android:layout_toEndOf="@+id/addDestButton"
+            android:layout_marginStart="54dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,18 +62,29 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add to list"
+        android:text="+ Add to list"
         android:id="@+id/addButton"
         android:clickable="true"
-        android:layout_marginRight="38dp"
-        android:layout_marginEnd="43dp"
         android:textColor="@color/colorAccent"
         android:theme="@style/Base.Widget.AppCompat.Button.Borderless"
-        android:layout_alignTop="@+id/addDestButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_gravity="right"
-        style="@style/Base.Widget.AppCompat.Button.Borderless" />
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/addDestButton"
+        android:layout_toEndOf="@+id/addDestButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- Clear"
+        android:id="@+id/clearButton"
+        android:clickable="true"
+        android:theme="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_gravity="right"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/addButton"
+        android:layout_toEndOf="@+id/addButton" />
 
     <Button
         android:layout_width="wrap_content"
@@ -82,12 +93,10 @@
         android:id="@+id/addDestButton"
         android:clickable="true"
         android:theme="@style/Base.Widget.AppCompat.Button.Borderless"
-        android:layout_marginLeft="35dp"
-        android:layout_marginStart="33dp"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/spinner"
-        android:layout_alignStart="@+id/spinner"
-        style="@style/Base.Widget.AppCompat.Button.Borderless" />
+        android:layout_alignLeft="@+id/destLabel"
+        android:layout_alignStart="@+id/destLabel" />
 
     <TextView
         android:layout_width="wrap_content"

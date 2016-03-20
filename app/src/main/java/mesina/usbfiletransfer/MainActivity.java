@@ -23,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
     public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
-    final String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
-    final String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
-    final String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
+    final String[] filesList = {"0:testpdf.pdf", "0:testppt.ppt", "0:testdoc.doc", "0:testtxt.txt", "0:testpng.png"};
+    final String[] filesList2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
+    final String[] usb2 = {"2:testpdf.pdf", "2:testppt.ppt", "2:testdoc.doc", "2:testtxt.txt", "2:testpng.png"};
 
 
     @Override
@@ -166,6 +166,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public ArrayList<String> checkSame(String dest) {
+        ArrayList<String> filenames = new ArrayList<String>();
+        String[] arr;
+        switch (dest){
+            case "USB1":
+                arr = filesList;
+                break;
+            case "USB2":
+                arr = filesList2;
+                break;
+            case "USB3":
+                arr = usb2;
+                break;
+            default:
+                arr = usb2;
+                break;
+        }
+        for (String s: arr) {
+            String f = s.substring(s.lastIndexOf(":"));
+            filenames.add(f);
+        }
+        return filenames;
+    }
 
 }

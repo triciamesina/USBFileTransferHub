@@ -37,7 +37,7 @@ public class PasteFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerAdapter mAdapter;
     int src;
-    String selectedFile, dest1, dest2, dest3;
+    String selectedFile, dest1, dest2, dest3, filename;
 
     public PasteFragment() {
         // Required empty public constructor
@@ -47,22 +47,25 @@ public class PasteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Data inside list view
-        String[] filesList = {"pdf", "png", "doc", "ppt", "txt"};
-        String[] filesList2 = {"pdf1", "png1", "doc1", "ppt1", "txt1"};
-        String[] usb2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
+        String[] filesList = {"0:testpdf.pdf", "0:testppt.ppt", "0:testdoc.doc", "0:testtxt.txt", "0:testpng.png"};
+        String[] filesList2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
+        String[] usb2 = {"2:testpdf.pdf", "2:testppt.ppt", "2:testdoc.doc", "2:testtxt.txt", "2:testpng.png"};
         MainActivity main = (MainActivity) getActivity();
         Bundle fromActivity = main.getSavedData();
         Bundle fromHome = this.getArguments();
-        String title = fromHome.getString("title");
+   //     String title = fromHome.getString("title");
         arrayList = fromActivity.getParcelableArrayList("list");
         Bundle destinations = main.getDestinations();
-        main.setActionBarTitle(title);
+        main.setActionBarTitle("Paste files");
         if (destinations != null) {
             dest1 = destinations.getString("dest1");
             dest2 = destinations.getString("dest2");
             dest3 = destinations.getString("dest3");
         }
         selectedFile = main.getSelectedFile();
+        if (selectedFile != " ") {
+            filename = selectedFile.substring(selectedFile.lastIndexOf(":"));
+        }
     }
 
     @Override
@@ -161,6 +164,7 @@ public class PasteFragment extends Fragment {
                     if (finalCount == 1 || finalCount == 2 || finalCount == 0) {
                         Bundle destCount = new Bundle();
                         destCount.putInt("count", finalCount);
+                        destCount.putString("fn", filename);
                         DestinationFragment chooseDest = new DestinationFragment();
                         chooseDest.setArguments(destCount);
                         //   Toast.makeText(getActivity(), "sent "+finalCount, Toast.LENGTH_SHORT).show();
@@ -214,6 +218,27 @@ public class PasteFragment extends Fragment {
             dest3 = " ";
         }
 
+        // Setup Clear Button
+        final Button clearButton = (Button) rootView.findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int size = main.arrayList.size();
+                main.arrayList.clear();
+                mAdapter.notifyItemRangeRemoved(0, size);
+                main.arrayList.add(new selection("Selected files", "Destinations"));
+                mAdapter.notifyItemInserted(0);
+                selectLabel.setText("Select a file");
+                destLabel1.setText("Choose destinations");
+                destLabel2.setText(" ");
+                destLabel3.setText(" ");
+                Bundle reset = new Bundle();
+                reset.putString("selected", "");
+                //  main.addToList(addtolist);
+                main.resetData();
+            }
+        });
+
         // Setup Add Button
         final Button addButton = (Button) rootView.findViewById(R.id.addButton);
         assert destButton != null;
@@ -258,6 +283,7 @@ public class PasteFragment extends Fragment {
                             MainFragment home = new MainFragment();
                             getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.arrayList.clear();
+                            main.arrayList.add(new selection("Selected files", "Destinations"));
                         }
                     }
                 }).show();

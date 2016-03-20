@@ -17,7 +17,7 @@ public class RenameAdapter extends RecyclerView.Adapter<RenameAdapter.mViewHolde
 
     private ArrayList<String> dirFiles;
     AdapterView.OnItemClickListener mItemClickListener;
-    private int selectedPos = 0;
+    private int selectedPos;
 
     @Override
     public mViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
