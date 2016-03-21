@@ -38,9 +38,15 @@ public class PasteFragment extends Fragment {
     RecyclerAdapter mAdapter;
     int src;
     String selectedFile, dest1, dest2, dest3, filename;
-
+    public Communicator comm;
     public PasteFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        comm = (Communicator) getActivity();
     }
 
     @Override
@@ -48,7 +54,7 @@ public class PasteFragment extends Fragment {
         super.onCreate(savedInstanceState);
         MainActivity main = (MainActivity) getActivity();
         Bundle fromActivity = main.getSavedData();
-        Bundle fromHome = this.getArguments();
+      //  Bundle fromHome = this.getArguments();
    //     String title = fromHome.getString("title");
         arrayList = fromActivity.getParcelableArrayList("list");
         Bundle destinations = main.getDestinations();
@@ -118,16 +124,15 @@ public class PasteFragment extends Fragment {
         final Button chooseButton = (Button) rootView.findViewById(R.id.chooseButton);
         assert chooseButton != null;
                 chooseButton.setOnClickListener(new View.OnClickListener() {
-                    @Nullable
+
                     @Override
                     public void onClick(View v) {
                         if (arrayList.size() < 15) {
                             Bundle args = new Bundle();
                             args.putStringArrayList("directory", dirfiles);
                             if (src != 0) {
-                                if (args == null) {
-                                    Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
-                                } else {
+                                String i = "E";
+                                    comm.respond(i);
                                     Bundle source = new Bundle();
                                     source.putInt("src", src);
                                     args.putInt("ope", PASTE_FRAGMENT);
@@ -136,8 +141,7 @@ public class PasteFragment extends Fragment {
                                     directoryFragment.setArguments(args);
                                     FragmentManager fm = getFragmentManager();
                                     fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
-                                }
-                            } else {
+                                } else {
                                 Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -294,5 +298,18 @@ public class PasteFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("list", arrayList);
         outState.putString("destination", dest1);
+    }
+
+  //  private Communicator comm = (Communicator) getActivity();
+
+    public void setCommunicator(Communicator c)
+    {
+        comm = c;
+    }
+    public interface Communicator {
+
+        void respond(String data);
+
+
     }
 }

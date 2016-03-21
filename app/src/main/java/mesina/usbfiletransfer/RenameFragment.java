@@ -98,6 +98,14 @@ public class RenameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                     if (src != 0) {
+                        switch (src) {
+                            case 1:
+                                main.mConnectedThread.write("E");
+                                break;
+                            default:
+                                main.mConnectedThread.write("F");
+                                break;
+                        }
                         directoryShow = dirfiles;
                         // Directory adapter
                         mAdapter = new RenameAdapter(directoryShow);

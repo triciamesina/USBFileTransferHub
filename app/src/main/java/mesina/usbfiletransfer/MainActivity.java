@@ -1,18 +1,57 @@
 package mesina.usbfiletransfer;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PasteFragment.Communicator{
+    //bluetooth
+
+    private static final String TAG = "thebluetooth";
+
+    private String myString;
+    private String mylist;
+
+
+    Handler h;
+
+    final int RECIEVE_MESSAGE = 1;        // Status  for Handler
+    private BluetoothAdapter btAdapter = null;
+    private BluetoothSocket btSocket = null;
+    private StringBuilder sb = new StringBuilder();
+
+    public ConnectedThread mConnectedThread;
+
+    // SPP UUID service
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+    // MAC-address of Bluetooth module (you must edit this line)
+    private static String address = "00:14:03:04:08:59";
+
+    //HC-05 20:15:04:16:06:79
+    //BM9600 00:14:03:04:08:59
+
 
     String selectedFile = " ";
     String dest1 = " ";
@@ -24,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
-    String usb1files = "0:testpdf.pdf 0:testppt.ppt 0:testdoc.doc 0:testtxt.txt 0:testpng.png";
+    //String usb1files = "0:testpdf.pdf 0:testppt.ppt 0:testdoc.doc 0:testtxt.txt 0:testpng.png";
+    String usb1files;
     String usb2files = "1:testpdf.pdf 1:testppt.ppt 1:testdoc.doc 1:testtxt.txt 1:testpng.png";
     String usb3files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
     String usb4files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
@@ -35,6 +75,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                switch (msg.what) {
+                    case RECIEVE_MESSAGE:                                                   // if receive massage
+                        byte[] readBuf = (byte[]) msg.obj;
+                        String strIncom = new String(readBuf, 0, msg.arg1);                 // create string from bytes array
+                        sb.append(strIncom);                                                // append string
+                        int endOfLineIndex = sb.indexOf("/");                            // determine the end-of-line
+                        if (endOfLineIndex > 0) {                                            // if end-of-line,
+                            String sbprint = sb.substring(0, endOfLineIndex);// extract string
+                            Log.d(TAG, "Received data: " + sbprint + "...");
+                            if(sb.charAt(0) == '0') {
+                                usb1files = sbprint;
+                            }
+                        }
+                        break;
+                }
+            }
+
+
+        };
+
+
+        btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
+        checkBTState();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,10 +124,163 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+        if (Build.VERSION.SDK_INT >= 10) {
+            try {
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
+                return (BluetoothSocket) m.invoke(device, MY_UUID);
+            } catch (Exception e) {
+                Log.e(TAG, "Could not create Insecure RFComm Connection", e);
+            }
+        }
+        return device.createRfcommSocketToServiceRecord(MY_UUID);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Toast.makeText(getBaseContext(), "Disconnected", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "...onResume - try connect...");
+
+        // Set up a pointer to the remote node using it's address.
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+        // Two things are needed to make a connection:
+        //   A MAC address, which we got above.
+        //   A Service ID or UUID.  In this case we are using the
+        //     UUID for SPP.
+
+        try {
+            btSocket = createBluetoothSocket(device);
+        } catch (IOException e) {
+            errorExit("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+        }
+
+        // Discovery is resource intensive.  Make sure it isn't going on
+        // when you attempt to connect and pass your message.
+        btAdapter.cancelDiscovery();
+
+        // Establish the connection.  This will block until it connects.
+        Log.d(TAG, "...Connecting...");
+        Toast.makeText(getBaseContext(), "Connected", Toast.LENGTH_SHORT).show();
+        try {
+            btSocket.connect();
+            Log.d(TAG, "....Connection ok...");
+            //Toast.makeText(getBaseContext(), "Connection ok", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            try {
+                btSocket.close();
+                Toast.makeText(getBaseContext(), "Disconnected", Toast.LENGTH_SHORT).show();
+            } catch (IOException e2) {
+                errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+            }
+        }
+
+        // Create a data stream so we can talk to server.
+        Log.d(TAG, "...Create Socket...");
+
+        mConnectedThread = new ConnectedThread(btSocket);
+        mConnectedThread.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Toast.makeText(getBaseContext(), "Disconnected", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "...In onPause()...");
+
+        try {
+            btSocket.close();
+
+        } catch (IOException e2) {
+            errorExit("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
+
+        }
+    }
+
+    private void checkBTState() {
+        // Check for Bluetooth support and then check to make sure it is turned on
+        // Emulator doesn't support Bluetooth and will return null
+        if (btAdapter == null) {
+            errorExit("Fatal Error", "Bluetooth not support");
+
+        } else {
+            if (btAdapter.isEnabled()) {
+                Log.d(TAG, "...Bluetooth ON...");
+            } else {
+                //Prompt user to turn on Bluetooth
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, 1);
+            }
+        }
+    }
+
+    private void errorExit(String title, String message) {
+        Toast.makeText(getBaseContext(), title + " - " + message, Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void respond(String data) {
+
+        mConnectedThread.write(data);
+    }
+
+
+    public class ConnectedThread extends Thread {
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams, using temp objects because
+            // member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {
+            }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[256];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read from the InputStream
+                    bytes = mmInStream.read(buffer);        // Get number of bytes and message in "buffer"
+                    h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, buffer).sendToTarget();     // Send to message queue Handler
+                } catch (IOException e) {
+                    break;
+                }
+            }
+        }
+
+        /* Call this from the main activity to send data to the remote device */
+        public void write(String message) {
+            Log.d(TAG, "...Data to send: " + message + "...");
+            byte[] msgBuffer = message.getBytes();
+            try {
+                mmOutStream.write(msgBuffer);
+            } catch (IOException e) {
+                Log.d(TAG, "...Error data send: " + e.getMessage() + "...");
+            }
+        }
+    }
+
+
+
     @Override
     public void onBackPressed() {
 
-            super.onBackPressed();
+        super.onBackPressed();
     }
 
     @Override
@@ -113,28 +332,28 @@ public class MainActivity extends AppCompatActivity {
         // based on the id you'll know which fragment is trying to save data(see below)
         // the Bundle will hold the data
 
-        if(id.equals("selected")) { // selected file
+        if(id == "selected") { // selected file
             selectedFile = data.getString("selected");
-        } else if (id.equals("source")) {
+        } else if (id == "source") {
             src = data.getInt("src");
-        } else if (id.equals("dest1")) { // from destination fragment
+        } else if (id == "dest1") { // from destination fragment
             dest1 = data.getString("dest1");
-        } else if (id.equals("dest2")) {
+        } else if (id == "dest2") {
             dest2 = data.getString("dest2");
-        } else if (id.equals("dest3")) {
+        } else if (id == "dest3") {
             dest3 = data.getString("dest3");
-        } else if (id.equals("list")) {
+        } else if (id == "list") {
             arrayList = data.getParcelableArrayList("list");
-        } else if (id.equals("reset")) {
+        } else if (id == "reset") {
 
             selectedFile = " ";
             dest1 = " ";
             dest2 = " ";
             dest3 = " ";
 
-        } else if (id.equals("delete")) {
+        } else if (id == "delete") {
             deleteList.add(data.getString("delete"));
-        } else if (id.equals("oldame")) {
+        } else if (id == "oldame") {
             oldName = data.getString("oldname");
         }
     }
@@ -172,6 +391,9 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> getDirectory(int source) {
         switch (source){
             case 1:
+                if (usb1files != null) {
+                    usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
+                }
                 return usb1List;
             case 2:
                 return usb2List;

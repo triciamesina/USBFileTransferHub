@@ -31,6 +31,7 @@ public class DeleteFragment extends Fragment {
     DirectoryAdapter mAdapter;
     int src = 0;
     public static int DELETE_FRAGMENT = 1;
+//public Communicator comm1;
 
     public DeleteFragment() {
         // Required empty public constructor
@@ -96,6 +97,7 @@ public class DeleteFragment extends Fragment {
                         if (args == null) {
                             Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
                         } else {
+                           // comm1.respond2("E");
                             Bundle source = new Bundle();
                             source.putInt("src", src);
                             args.putInt("ope", DELETE_FRAGMENT);
@@ -150,5 +152,17 @@ public class DeleteFragment extends Fragment {
 
         return rootView;
     }
+
+
+    //private Communicator comm = (Communicator) getActivity();
+
+
+/*
+    public interface Communicator {
+
+       void respond2(String data2);
+
+    }
+    */
 
 }
