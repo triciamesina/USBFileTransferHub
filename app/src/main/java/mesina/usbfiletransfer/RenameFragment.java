@@ -30,13 +30,14 @@ import java.util.Arrays;
  */
 public class RenameFragment extends Fragment {
 
-    private String[] dirfiles;
+    private ArrayList<String> dirfiles;
     private ArrayList<String> directoryShow = new ArrayList<String>();
     RecyclerView recyclerView;
     RenameAdapter mAdapter;
     int src = 0;
     public static int RENAME_FRAGMENT = 2;
-
+    String oldName;
+    int pos;
 
     public RenameFragment() {
         // Required empty public constructor
@@ -97,7 +98,7 @@ public class RenameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                     if (src != 0) {
-                        directoryShow = new ArrayList<String> (Arrays.asList(dirfiles));
+                        directoryShow = dirfiles;
                         // Directory adapter
                         mAdapter = new RenameAdapter(directoryShow);
                         // Get recyclerview layout manager
@@ -117,47 +118,68 @@ public class RenameFragment extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String selectedFile = directoryShow.get(position);
-                Toast.makeText(getActivity(), selectedFile + " selected", Toast.LENGTH_SHORT).show();
+                oldName = directoryShow.get(position);
+                pos = position;
+                Toast.makeText(getActivity(), oldName + " selected", Toast.LENGTH_SHORT).show();
                 Bundle extras = new Bundle();
                 MainActivity main = (MainActivity) getActivity();
+                extras.putString("oldname", oldName);
+                main.saveData("oldname", extras);
+                createAlert(oldName);
             }
         }));
 
+        return rootView;
+    }
 
-    // Setup Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+    private void createAlert(final String oldName) {
+        final MainActivity main = (MainActivity) getActivity();
+        final String root = oldName.substring(0, oldName.lastIndexOf(":")+1);
+        final String ext = oldName.substring(oldName.lastIndexOf("."));
+
+        AlertDialog.Builder getNewName = new AlertDialog.Builder(getActivity());
+        getNewName.setTitle("Rename");
+        String oldfn = oldName.substring(oldName.lastIndexOf(":")+1);
+        getNewName.setMessage(oldfn + " selected. Enter the new name: (Maximum of 8 characters)");
+
+        final EditText input = new EditText(getActivity());
+        getNewName.setView(input);
+        getNewName.setPositiveButton("OK", null);
+        final AlertDialog alertDialog = getNewName.create();
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder getNewName = new AlertDialog.Builder(getActivity());
-                getNewName.setTitle("Rename");
-                getNewName.setMessage("Enter the new name (Maximum of 8 characters)");
-
-                final EditText input = new EditText(getActivity());
-                getNewName.setView(input);
-                getNewName.setPositiveButton("OK", null);
-                final AlertDialog alertDialog = getNewName.create();
-                alertDialog.show();
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newname = input.getEditableText().toString();
-                        if (newname.length() > 8) {
-                            Toast.makeText(getActivity(), "Maximum of 8 characters!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "File renamed!", Toast.LENGTH_SHORT).show();
-                            alertDialog.dismiss();
-                            MainFragment home = new MainFragment();
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                        }
+                String newname = input.getEditableText().toString();
+                if (newname.length() > 8) {
+                    Toast.makeText(getActivity(), "Maximum of 8 characters!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "File renamed to " + newname +"!", Toast.LENGTH_SHORT).show();
+                    alertDialog.dismiss();
+                    switch (src){
+                        case 1:
+                            main.usb1List.set(main.usb1List.indexOf(oldName), root.concat(newname).concat(ext));
+                            mAdapter.notifyItemChanged(main.usb1List.indexOf(oldName));
+                            break;
+                        case 2:
+                            main.usb2List.set(main.usb2List.indexOf(oldName), root.concat(newname).concat(ext));
+                            mAdapter.notifyItemChanged(main.usb2List.indexOf(oldName));
+                            break;
+                        case 3:
+                            main.usb3List.set(main.usb3List.indexOf(oldName), root.concat(newname).concat(ext));
+                            mAdapter.notifyItemChanged(main.usb3List.indexOf(oldName));
+                            break;
+                        default:
+                            main.usb4List.set(main.usb4List.indexOf(oldName), root.concat(newname).concat(ext));
+                            mAdapter.notifyItemChanged(main.usb4List.indexOf(oldName));
+                            break;
                     }
-                });
+                    MainFragment home = new MainFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                }
             }
         });
 
-
-        return rootView;
     }
 
 }

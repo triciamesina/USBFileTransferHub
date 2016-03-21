@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,10 +24,12 @@ public class MainActivity extends AppCompatActivity {
     public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
-    final String[] filesList = {"0:testpdf.pdf", "0:testppt.ppt", "0:testdoc.doc", "0:testtxt.txt", "0:testpng.png"};
-    final String[] filesList2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
-    final String[] usb2 = {"2:testpdf.pdf", "2:testppt.ppt", "2:testdoc.doc", "2:testtxt.txt", "2:testpng.png"};
-
+    String usb1files = "0:testpdf.pdf 0:testppt.ppt 0:testdoc.doc 0:testtxt.txt 0:testpng.png";
+    String usb2files = "1:testpdf.pdf 1:testppt.ppt 1:testdoc.doc 1:testtxt.txt 1:testpng.png";
+    String usb3files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
+    String usb4files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
+    ArrayList<String> usb1List, usb2List, usb3List, usb4List;
+    String oldName = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,18 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
         selection initial = new selection("Selected files", "Destinations");
         arrayList.add(initial);
-
+        if (usb1files != null) {
+            usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
+        }
+        if (usb2files != null) {
+            usb2List = new ArrayList<String>(Arrays.asList(usb2files.split(" ")));
+        }
+        if (usb3files != null) {
+            usb3List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
+        }
+        if (usb4files != null) {
+            usb4List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
+        }
     }
 
     @Override
@@ -99,27 +113,29 @@ public class MainActivity extends AppCompatActivity {
         // based on the id you'll know which fragment is trying to save data(see below)
         // the Bundle will hold the data
 
-        if(id == "selected") { // selected file
+        if(id.equals("selected")) { // selected file
             selectedFile = data.getString("selected");
-        } else if (id == "source") {
+        } else if (id.equals("source")) {
             src = data.getInt("src");
-        } else if (id == "dest1") { // from destination fragment
+        } else if (id.equals("dest1")) { // from destination fragment
             dest1 = data.getString("dest1");
-        } else if (id == "dest2") {
+        } else if (id.equals("dest2")) {
             dest2 = data.getString("dest2");
-        } else if (id == "dest3") {
+        } else if (id.equals("dest3")) {
             dest3 = data.getString("dest3");
-        } else if (id == "list") {
+        } else if (id.equals("list")) {
             arrayList = data.getParcelableArrayList("list");
-        } else if (id == "reset") {
+        } else if (id.equals("reset")) {
 
             selectedFile = " ";
             dest1 = " ";
             dest2 = " ";
             dest3 = " ";
 
-        } else if (id == "delete") {
+        } else if (id.equals("delete")) {
             deleteList.add(data.getString("delete"));
+        } else if (id.equals("oldame")) {
+            oldName = data.getString("oldname");
         }
     }
 
@@ -153,41 +169,41 @@ public class MainActivity extends AppCompatActivity {
         return data;
     }
 
-    public String[] getDirectory(int source) {
+    public ArrayList<String> getDirectory(int source) {
         switch (source){
             case 1:
-                return filesList;
+                return usb1List;
             case 2:
-                return filesList2;
+                return usb2List;
             case 3:
-                return usb2;
+                return usb3List;
             default:
-                return usb2;
+                return usb4List;
         }
     }
 
     public ArrayList<String> checkSame(String dest) {
         ArrayList<String> filenames = new ArrayList<String>();
-        String[] arr;
+        ArrayList<String> arr;
         switch (dest){
             case "USB1":
-                arr = filesList;
+                arr = usb1List;
                 break;
             case "USB2":
-                arr = filesList2;
+                arr = usb2List;
                 break;
             case "USB3":
-                arr = usb2;
+                arr = usb3List;
                 break;
             default:
-                arr = usb2;
+                arr = usb4List;
                 break;
         }
-        for (String s: arr) {
-            String f = s.substring(s.lastIndexOf(":"));
+        for (int i = 0; i < arr.size(); i++) {
+            String s = arr.get(i);
+            String f = s.substring(s.lastIndexOf(":")+1);
             filenames.add(f);
         }
         return filenames;
     }
-
 }

@@ -43,10 +43,10 @@ public class ChooseFragment extends Fragment {
         final int ope; // operation chosen
         Bundle extras = this.getArguments();
         ope = extras.getInt("ope");
-        filesList = extras.getStringArray("directory");
+        dirFiles = extras.getStringArrayList("directory");
       //  Toast.makeText(getActivity(), "operation" + ope, Toast.LENGTH_SHORT).show();
-        if (filesList != null) {
-            final ArrayList<String> dirFiles = new ArrayList<String>(Arrays.asList(filesList));
+        if (dirFiles != null) {
+         //   final ArrayList<String> dirFiles = new ArrayList<String>(Arrays.asList(filesList));
 
             // Get recyclerview id from layout
             recyclerView = (RecyclerView) rootView.findViewById(R.id.dirRecyclerView);

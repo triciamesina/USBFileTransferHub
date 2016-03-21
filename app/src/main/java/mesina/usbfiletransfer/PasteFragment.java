@@ -33,7 +33,7 @@ public class PasteFragment extends Fragment {
     public static int PASTE_FRAGMENT = 0;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<selection> arrayList;
-    String[] dirfiles;
+    ArrayList<String> dirfiles;
     RecyclerView recyclerView;
     RecyclerAdapter mAdapter;
     int src;
@@ -46,10 +46,6 @@ public class PasteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Data inside list view
-        String[] filesList = {"0:testpdf.pdf", "0:testppt.ppt", "0:testdoc.doc", "0:testtxt.txt", "0:testpng.png"};
-        String[] filesList2 = {"1:testpdf.pdf", "1:testppt.ppt", "1:testdoc.doc", "1:testtxt.txt", "1:testpng.png"};
-        String[] usb2 = {"2:testpdf.pdf", "2:testppt.ppt", "2:testdoc.doc", "2:testtxt.txt", "2:testpng.png"};
         MainActivity main = (MainActivity) getActivity();
         Bundle fromActivity = main.getSavedData();
         Bundle fromHome = this.getArguments();
@@ -64,7 +60,7 @@ public class PasteFragment extends Fragment {
         }
         selectedFile = main.getSelectedFile();
         if (selectedFile != " ") {
-            filename = selectedFile.substring(selectedFile.lastIndexOf(":"));
+            filename = selectedFile.substring(selectedFile.lastIndexOf(":")+1);
         }
     }
 
@@ -127,7 +123,7 @@ public class PasteFragment extends Fragment {
                     public void onClick(View v) {
                         if (arrayList.size() < 15) {
                             Bundle args = new Bundle();
-                            args.putStringArray("directory", dirfiles);
+                            args.putStringArrayList("directory", dirfiles);
                             if (src != 0) {
                                 if (args == null) {
                                     Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();

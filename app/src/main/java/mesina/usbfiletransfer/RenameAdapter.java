@@ -18,7 +18,6 @@ public class RenameAdapter extends RecyclerView.Adapter<RenameAdapter.mViewHolde
     private ArrayList<String> dirFiles;
     AdapterView.OnItemClickListener mItemClickListener;
     private int selectedPos;
-
     @Override
     public mViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.files_rename_layout, parent, false);
@@ -52,5 +51,5 @@ public class RenameAdapter extends RecyclerView.Adapter<RenameAdapter.mViewHolde
     public RenameAdapter(ArrayList<String> dirFiles) {
         this.dirFiles = dirFiles;
     }
-
 }
+

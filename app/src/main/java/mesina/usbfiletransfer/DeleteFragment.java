@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 public class DeleteFragment extends Fragment {
 
-    private String[] dirfiles;
+    private ArrayList<String> dirfiles;
     private ArrayList<String> deleteList;
     RecyclerView recyclerView;
     DirectoryAdapter mAdapter;
@@ -91,7 +91,7 @@ public class DeleteFragment extends Fragment {
             public void onClick(View v) {
                 if (deleteList.size() < 15) {
                     Bundle args = new Bundle();
-                    args.putStringArray("directory", dirfiles);
+                    args.putStringArrayList("directory", dirfiles);
                     if (src != 0) {
                         if (args == null) {
                             Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
