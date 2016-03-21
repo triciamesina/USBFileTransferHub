@@ -38,15 +38,29 @@ public class ChooseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_choose, container, false);
-
+        final MainActivity main = (MainActivity) getActivity();
         String[] filesList;
         final int ope; // operation chosen
         Bundle extras = this.getArguments();
         ope = extras.getInt("ope");
-        dirFiles = extras.getStringArrayList("directory");
+        int s = extras.getInt("src");
+     //   dirFiles = extras.getStringArrayList("directory");
+        switch(s) {
+            case 1:
+                dirFiles = main.usb1List;
+                break;
+            case 2:
+                dirFiles = main.usb2List;
+                break;
+            case 3:
+                dirFiles = main.usb3List;
+                break;
+            default:
+                dirFiles = main.usb4List;
+                break;
+        }
       //  Toast.makeText(getActivity(), "operation" + ope, Toast.LENGTH_SHORT).show();
         if (dirFiles != null) {
-         //   final ArrayList<String> dirFiles = new ArrayList<String>(Arrays.asList(filesList));
 
             // Get recyclerview id from layout
             recyclerView = (RecyclerView) rootView.findViewById(R.id.dirRecyclerView);
@@ -65,6 +79,8 @@ public class ChooseFragment extends Fragment {
                 public void onItemClick(View view, int position) {
 
                     String selectedFile = dirFiles.get(position);
+                    main.mConnectedThread.write(String.valueOf(position));
+                    main.mConnectedThread.write("-");
                     Toast.makeText(getActivity(), selectedFile + " selected", Toast.LENGTH_SHORT).show();
                     Bundle extras = new Bundle();
                     MainActivity main = (MainActivity) getActivity();

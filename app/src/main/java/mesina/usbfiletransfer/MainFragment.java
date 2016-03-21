@@ -1,6 +1,7 @@
 package mesina.usbfiletransfer;
 
 
+import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -50,6 +51,8 @@ public class MainFragment extends Fragment {
         pasteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity main = (MainActivity) getActivity();
+                main.mConnectedThread.write("D");
                 title.putString("title", "Paste files");
                 pasteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).commit();

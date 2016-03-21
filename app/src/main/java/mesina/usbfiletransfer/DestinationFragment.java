@@ -129,6 +129,20 @@ public class DestinationFragment extends DialogFragment {
                     Toast.makeText(getActivity(), "Number of destinations exceeded", Toast.LENGTH_SHORT).show();
                     break;
             }
+            switch (dest) {
+                case "USB1":
+                    main.mConnectedThread.write("m");
+                    break;
+                case "USB2":
+                    main.mConnectedThread.write("n");
+                    break;
+                case "USB3":
+                    main.mConnectedThread.write("o");
+                    break;
+                case "USB4":
+                    main.mConnectedThread.write("p");
+                    break;
+            }
             Bundle send = new Bundle();
             int newcount = count+1;
             send.putInt("count", newcount);

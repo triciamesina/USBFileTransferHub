@@ -25,15 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements PasteFragment.Communicator{
+public class MainActivity extends AppCompatActivity {
     //bluetooth
 
     private static final String TAG = "thebluetooth";
 
     private String myString;
     private String mylist;
-
-
     Handler h;
 
     final int RECIEVE_MESSAGE = 1;        // Status  for Handler
@@ -64,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
     //String usb1files = "0:testpdf.pdf 0:testppt.ppt 0:testdoc.doc 0:testtxt.txt 0:testpng.png";
-    String usb1files;
-    String usb2files = "1:testpdf.pdf 1:testppt.ppt 1:testdoc.doc 1:testtxt.txt 1:testpng.png";
-    String usb3files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
+    String usb1files = "";
+    String usb2files = "";
+    String usb3files = "";
     String usb4files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
     ArrayList<String> usb1List, usb2List, usb3List, usb4List;
     String oldName = " ";
@@ -80,22 +78,25 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case RECIEVE_MESSAGE:                                                   // if receive massage
-                        byte[] readBuf = (byte[]) msg.obj;
+                      /*  byte[] readBuf = (byte[]) msg.obj;
                         String strIncom = new String(readBuf, 0, msg.arg1);                 // create string from bytes array
                         sb.append(strIncom);                                                // append string
                         int endOfLineIndex = sb.indexOf("/");                            // determine the end-of-line
-                        if (endOfLineIndex > 0) {                                            // if end-of-line,
-                            String sbprint = sb.substring(0, endOfLineIndex);// extract string
-                            Log.d(TAG, "Received data: " + sbprint + "...");
-                            if(sb.charAt(0) == '0') {
-                                usb1files = sbprint;
-                            }
+                        if (endOfLineIndex > 0) {// if end-of-line,
+                            String sbprint = sb.substring(0, endOfLineIndex); */// extract string
+                        if (msg.arg1 > 0) {
+                            String sbprint = (String) msg.obj;
+                        Log.d(TAG, "Received data: " + sbprint + "...");
+                        if (sb.charAt(0) == '0') {
+                            String directory = sbprint;
+                            splitDirs(directory);
                         }
-                        break;
+                            break;
                 }
             }
-
-
+                    //   break;
+              //  }
+            }
         };
 
 
@@ -124,6 +125,23 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
         }
     }
 
+    private void splitDirs(String directory) {
+        ArrayList<String> dirarray = new ArrayList<> (Arrays.asList(directory.split(",")));
+        if (dirarray.size() >= 0) {
+            usb1files = dirarray.get(0);
+        }
+        if (dirarray.size() > 1) {
+            usb2files = dirarray.get(1);
+        }
+        if (dirarray.size() > 2) {
+            usb3files = dirarray.get(2);
+        }
+        if (dirarray.size() > 3) {
+            usb4files = dirarray.get(3);
+        }
+
+    }
+
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         if (Build.VERSION.SDK_INT >= 10) {
             try {
@@ -149,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
         //   A MAC address, which we got above.
         //   A Service ID or UUID.  In this case we are using the
         //     UUID for SPP.
-
         try {
             btSocket = createBluetoothSocket(device);
         } catch (IOException e) {
@@ -162,17 +179,19 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
 
         // Establish the connection.  This will block until it connects.
         Log.d(TAG, "...Connecting...");
-        Toast.makeText(getBaseContext(), "Connected", Toast.LENGTH_SHORT).show();
-        try {
-            btSocket.connect();
-            Log.d(TAG, "....Connection ok...");
-            //Toast.makeText(getBaseContext(), "Connection ok", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
+    //    Toast.makeText(getBaseContext(), "Connected", Toast.LENGTH_SHORT).show();
+        if(!btSocket.isConnected()) {
             try {
-                btSocket.close();
-                Toast.makeText(getBaseContext(), "Disconnected", Toast.LENGTH_SHORT).show();
-            } catch (IOException e2) {
-                errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+                btSocket.connect();
+                Log.d(TAG, "....Connection ok...");
+                Toast.makeText(getBaseContext(), "Connection ok", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                try {
+                    btSocket.close();
+                    Toast.makeText(getBaseContext(), "Disconnected", Toast.LENGTH_SHORT).show();
+                } catch (IOException e2) {
+                    errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+                }
             }
         }
 
@@ -220,13 +239,6 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
         finish();
     }
 
-    @Override
-    public void respond(String data) {
-
-        mConnectedThread.write(data);
-    }
-
-
     public class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -256,7 +268,20 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);        // Get number of bytes and message in "buffer"
-                    h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, buffer).sendToTarget();     // Send to message queue Handler
+                   // String rcvd = new String(buffer, 0, bytes);
+                  //  Log.d(TAG, "Receive: " + buffer);
+                    String strIncom = new String(buffer, 0, bytes); // create string from bytes array
+                    buffer[bytes] = '\0';
+                    sb.append(strIncom);                                                // append string
+                    int endOfLineIndex = sb.indexOf("/");                            // determine the end-of-line
+                    if (endOfLineIndex > 0) {// if end-of-line,
+                        String newstring = "";
+                        newstring = sb.substring(0, endOfLineIndex);// extract string
+                          Log.d(TAG, "Receive: " + newstring);
+                       // h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, buffer).sendToTarget(); //Send to message queue Handler
+                        h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, newstring).sendToTarget();
+                        newstring = "";
+                    }
                 } catch (IOException e) {
                     break;
                 }
@@ -302,6 +327,10 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
             finish();
             return true;
         } else if (id == R.id.action_back) {
+            mConnectedThread.write("k");
+            resetData();
+            arrayList.clear();
+            arrayList.add(new selection("Selected Files", "Destinations"));
             MainFragment home = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
             return true;
@@ -394,12 +423,23 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
                 if (usb1files != null) {
                     usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
                 }
+                Log.d(TAG, usb1files);
                 return usb1List;
             case 2:
+                if (usb2files != null) {
+                    usb2List = new ArrayList<String>(Arrays.asList(usb2files.split(" ")));
+                }
+                Log.d(TAG, usb2files);
                 return usb2List;
             case 3:
+                if (usb3files != null) {
+                    usb3List = new ArrayList<String>(Arrays.asList(usb3files.split(" ")));
+                }
                 return usb3List;
             default:
+                if (usb4files != null) {
+                    usb4List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
+                }
                 return usb4List;
         }
     }
@@ -428,4 +468,14 @@ public class MainActivity extends AppCompatActivity implements PasteFragment.Com
         }
         return filenames;
     }
+/*
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            btSocket.close();
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+        }
+    }*/
 }

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,15 +39,9 @@ public class PasteFragment extends Fragment {
     RecyclerAdapter mAdapter;
     int src;
     String selectedFile, dest1, dest2, dest3, filename;
-    public Communicator comm;
+
     public PasteFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        comm = (Communicator) getActivity();
     }
 
     @Override
@@ -131,10 +126,25 @@ public class PasteFragment extends Fragment {
                             Bundle args = new Bundle();
                             args.putStringArrayList("directory", dirfiles);
                             if (src != 0) {
-                                String i = "E";
-                                    comm.respond(i);
+                                    switch (src) {
+                                        case 1:
+                                            main.mConnectedThread.write("E"); // set usb1 as source
+                                            break;
+                                        case 2:
+                                            main.mConnectedThread.write("F"); // set usb2 as source
+                                            break;
+                                        case 3:
+                                            main.mConnectedThread.write("G"); // set usb3 as source
+                                            break;
+                                        default:
+                                            main.mConnectedThread.write("H"); // set usb4 as source
+                                            break;
+
+                                    }
+                                    Log.d("PASTE", dirfiles.get(0));
                                     Bundle source = new Bundle();
                                     source.putInt("src", src);
+                                    args.putInt("src", src);
                                     args.putInt("ope", PASTE_FRAGMENT);
                                     main.saveData("source", source);
                                     ChooseFragment directoryFragment = new ChooseFragment();
@@ -223,6 +233,7 @@ public class PasteFragment extends Fragment {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                main.mConnectedThread.write("k");
                 int size = main.arrayList.size();
                 main.arrayList.clear();
                 mAdapter.notifyItemRangeRemoved(0, size);
@@ -252,6 +263,7 @@ public class PasteFragment extends Fragment {
                     Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
+                    main.mConnectedThread.write("A");
                     selection addtolist = new selection(finalSelectedFile, finalDest);
                     arrayList.add(addtolist);
                     mAdapter.notifyItemInserted(arrayList.size());
@@ -279,6 +291,7 @@ public class PasteFragment extends Fragment {
                         if (size <= 1) {
                             Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                         } else {
+                            main.mConnectedThread.write("i"); // start paste
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
                             MainFragment home = new MainFragment();
                             getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
@@ -300,16 +313,4 @@ public class PasteFragment extends Fragment {
         outState.putString("destination", dest1);
     }
 
-  //  private Communicator comm = (Communicator) getActivity();
-
-    public void setCommunicator(Communicator c)
-    {
-        comm = c;
-    }
-    public interface Communicator {
-
-        void respond(String data);
-
-
-    }
 }
