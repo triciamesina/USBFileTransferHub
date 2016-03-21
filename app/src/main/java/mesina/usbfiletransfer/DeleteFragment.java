@@ -97,7 +97,7 @@ public class DeleteFragment extends Fragment {
                         if (args == null) {
                             Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
                         } else {
-                           // comm1.respond2("E");
+
                             Bundle source = new Bundle();
                             source.putInt("src", src);
                             args.putInt("ope", DELETE_FRAGMENT);
@@ -141,6 +141,7 @@ public class DeleteFragment extends Fragment {
                             Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
+                            main.mConnectedThread.write("q");
                             MainFragment home = new MainFragment();
                             getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.deleteList.clear();

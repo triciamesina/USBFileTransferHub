@@ -34,7 +34,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        MainActivity main = (MainActivity) getActivity();
+        final MainActivity main = (MainActivity) getActivity();
         main.setActionBarTitle("USB File Transfer Hub");
         final Bundle title = new Bundle();
         final FragmentManager fm = getFragmentManager();
@@ -67,6 +67,7 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                main.mConnectedThread.write("D");
                 title.putString("title", "Move files");
                 PasteFragment fragment = new PasteFragment();
                 pasteFragment.setArguments(title);
@@ -82,6 +83,7 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                main.mConnectedThread.write("D");
                 title.putString("title", "Delete files");
                 deleteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, deleteFragment).commit();
@@ -96,6 +98,8 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                main.mConnectedThread.write("D");
+                main.mConnectedThread.write("r");
                 title.putString("title", "Rename files");
                 renameFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, renameFragment).commit();

@@ -128,6 +128,7 @@ public class RenameFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 oldName = directoryShow.get(position);
                 pos = position;
+                main.mConnectedThread.write(Integer.toString(position));
                 Toast.makeText(getActivity(), oldName + " selected", Toast.LENGTH_SHORT).show();
                 Bundle extras = new Bundle();
                 MainActivity main = (MainActivity) getActivity();
