@@ -69,7 +69,6 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
                 title.putString("title", "Move files");
-                PasteFragment fragment = new PasteFragment();
                 pasteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).commit();
             }

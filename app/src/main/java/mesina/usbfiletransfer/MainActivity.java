@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                             String directory = sbprint;
                             splitDirs(directory);
                         }
+
+                            sb.delete(0, sb.length());
                             break;
                 }
             }
@@ -200,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
         mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
+        mConnectedThread.write("l");
     }
 
     @Override
@@ -277,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
                     if (endOfLineIndex > 0) {// if end-of-line,
                         String newstring = "";
                         newstring = sb.substring(0, endOfLineIndex);// extract string
-                          Log.d(TAG, "Receive: " + newstring);
+                        sb.delete(0, sb.length());
+                        Log.d(TAG, "Receive: " + newstring);
                        // h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, buffer).sendToTarget(); //Send to message queue Handler
                         h.obtainMessage(RECIEVE_MESSAGE, bytes, -1, newstring).sendToTarget();
                         newstring = "";
@@ -461,14 +465,17 @@ public class MainActivity extends AppCompatActivity {
                 arr = usb4List;
                 break;
         }
+        Log.d(TAG+"/chek/dest", dest);
         for (int i = 0; i < arr.size(); i++) {
             String s = arr.get(i);
             String f = s.substring(s.lastIndexOf(":")+1);
             filenames.add(f);
+            Log.d(TAG + "/chek/s", s);
+            Log.d(TAG+"/chek/fn", f);
         }
         return filenames;
     }
-/*
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -477,5 +484,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
         }
-    }*/
+    }
 }
