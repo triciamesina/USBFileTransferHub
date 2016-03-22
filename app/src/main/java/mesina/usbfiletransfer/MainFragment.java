@@ -43,6 +43,7 @@ public class MainFragment extends Fragment {
         final PasteFragment pasteFragment = new PasteFragment();
         final DeleteFragment deleteFragment = new DeleteFragment();
         final RenameFragment renameFragment = new RenameFragment();
+        final MoveFragment moveFragment = new MoveFragment();
 
         // Paste Button
         RelativeLayout pasteLayout = (RelativeLayout) rootView.findViewById(R.id.pasteLayout);
@@ -55,7 +56,7 @@ public class MainFragment extends Fragment {
                 main.mConnectedThread.write("D");
                 title.putString("title", "Paste files");
                 pasteFragment.setArguments(title);
-                fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).addToBackStack(null).commit();
             }
         });
 
@@ -70,7 +71,7 @@ public class MainFragment extends Fragment {
                 main.mConnectedThread.write("D");
                 title.putString("title", "Move files");
                 pasteFragment.setArguments(title);
-                fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, moveFragment).addToBackStack(null).commit();
             }
         });
 
@@ -85,7 +86,7 @@ public class MainFragment extends Fragment {
                 main.mConnectedThread.write("D");
                 title.putString("title", "Delete files");
                 deleteFragment.setArguments(title);
-                fm.beginTransaction().replace(R.id.fragment_container, deleteFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, deleteFragment).addToBackStack(null).commit();
             }
         });
 
@@ -101,7 +102,7 @@ public class MainFragment extends Fragment {
                 main.mConnectedThread.write("r");
                 title.putString("title", "Rename files");
                 renameFragment.setArguments(title);
-                fm.beginTransaction().replace(R.id.fragment_container, renameFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, renameFragment).addToBackStack(null).commit();
             }
         });
 

@@ -1,5 +1,6 @@
 package mesina.usbfiletransfer;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -62,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
     public static int PASTE_FRAGMENT = 0;
     public static int CHOOSE_FRAGMENT = 1;
     public static int DESTINATION_FRAGMENT = 2;
-    //String usb1files = "0:testpdf.pdf 0:testppt.ppt 0:testdoc.doc 0:testtxt.txt 0:testpng.png";
     String usb1files = "";
+   // String usb1files = "";
     String usb2files = "";
     String usb3files = "";
-    String usb4files = "2:testpdf.pdf 2:testppt.ppt 2:testdoc.doc 2:testtxt.txt 2:testpng.png";
+    String usb4files = "";
     ArrayList<String> usb1List, usb2List, usb3List, usb4List;
     String oldName = " ";
 
@@ -91,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
                         if (sbprint.charAt(0) == '0') {
                             String directory = sbprint;
                             splitDirs(directory);
+                        } else if (sbprint.charAt(0) == '*') {
+                            MainFragment home = new MainFragment();
+                            getSupportFragmentManager().beginTransaction().
+                                    replace(R.id.fragment_container, home).commit();
                         }
 
                             break;
@@ -120,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             usb2List = new ArrayList<String>(Arrays.asList(usb2files.split(" ")));
         }
         if (usb3files != null) {
-            usb3List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
+            usb3List = new ArrayList<String>(Arrays.asList(usb3files.split(" ")));
         }
         if (usb4files != null) {
             usb4List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
@@ -317,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         super.onBackPressed();
+        mConnectedThread.write("k");
     }
 
     @Override
@@ -455,10 +461,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<String> checkSame(String dest) {
+    public ArrayList<String> checkSame(String d) {
         ArrayList<String> filenames = new ArrayList<String>();
-        ArrayList<String> arr;
-        switch (dest){
+        ArrayList<String> arr = new ArrayList<>();
+        switch (d){
             case "USB1":
                 arr = usb1List;
                 break;
@@ -468,16 +474,16 @@ public class MainActivity extends AppCompatActivity {
             case "USB3":
                 arr = usb3List;
                 break;
-            default:
+            case "USB4":
                 arr = usb4List;
                 break;
         }
-        Log.d(TAG+"/chek/dest", dest);
+        Log.d(TAG+"/chek/dest", d);
         for (int i = 0; i < arr.size(); i++) {
             String s = arr.get(i);
             String f = s.substring(s.lastIndexOf(":")+1);
             filenames.add(f);
-            Log.d(TAG + "/chek/s", s);
+            Log.d(TAG + "/chek/s", usb3files);
             Log.d(TAG+"/chek/fn", f);
         }
         return filenames;

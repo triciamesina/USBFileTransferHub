@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class DestinationFragment extends DialogFragment {
 
     // Add list of items
     CharSequence[] destlist;
-    String dest;
+    String destdrv;
     public static int DESTINATION_FRAGMENT = 2;
     Bundle extras;
     MainActivity main = (MainActivity) getActivity();
@@ -34,8 +35,8 @@ public class DestinationFragment extends DialogFragment {
         MainActivity main = (MainActivity) getActivity();
         int source = main.getSource();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose the destination");
         builder.setPositiveButton("OK", new PositiveButtonClickListener());
+        builder.setTitle("Choose the destination");
         CharSequence[] usb1 = new CharSequence[]{"USB2", "USB3", "USB4"};
         CharSequence[] usb2 = new CharSequence[]{"USB1", "USB3", "USB4"};
         CharSequence[] usb3 = new CharSequence[]{"USB1", "USB2", "USB4"};
@@ -58,7 +59,13 @@ public class DestinationFragment extends DialogFragment {
         if (extras != null) {
             count = extras.getInt("count");
             fn = extras.getString("fn");
-            builder.setSingleChoiceItems(destlist, -1, selectItemListener);
+            builder.setSingleChoiceItems(destlist, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    destdrv = (String) destlist[which];
+                    Log.d("thebluetooth", "destdrv " +destdrv);
+                }
+            });
         }
         Toast.makeText(getActivity(), "chosen file" + fn, Toast.LENGTH_SHORT).show();
         return builder.create();
@@ -68,14 +75,14 @@ public class DestinationFragment extends DialogFragment {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            Toast.makeText(getActivity(), dest + "selected", Toast.LENGTH_SHORT).show();
-                searchDir();
-            }
+            Toast.makeText(getActivity(), destdrv + " selected", Toast.LENGTH_SHORT).show();
+            searchDir(destdrv);
+            Log.d("thebluetooth", "destdrv " + destdrv);
         }
+    }
 
 
-
-
+/*
     private void showAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle("Warning");
@@ -92,30 +99,58 @@ public class DestinationFragment extends DialogFragment {
                 dialog.dismiss();
             }
         });
+    }*/
+
+    private void showAlert() {
+
+        final AlertDialog.Builder overwrite = new AlertDialog.Builder(getActivity());
+        overwrite.setTitle("Overwrite File!");
+        overwrite.setMessage("The filename already exists in this drive. Overwrite file?");
+        overwrite.setPositiveButton("YES", new AlertDialog.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                addData(destdrv);
+                Log.d("thebluetooth", "destdrv " + destdrv + " "+ which);
+            }
+        });
+        overwrite.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                overwrite.create().dismiss();
+            }
+        });
+        overwrite.create().show();
     }
 
-    private void searchDir() {
+    private void searchDir(String dest) {
         MainActivity main = (MainActivity) getActivity();
         ArrayList<String> dir = main.checkSame(dest);
         if (dir != null) {
+            Log.d("thebluetooth", fn);
             for (int i = 0; i < dir.size(); i++) {
-                if (dir.get(i).equals(fn)) {
+                Log.d("thebluetooth", dir.get(i));
+                if (dir.get(i).equals(fn) || dir.get(i).equals(fn.toLowerCase())) {
+                    Toast.makeText(getActivity(), "Same fn " + fn + " "+ dir.get(i), Toast.LENGTH_SHORT).show();
                     showAlert();
                 }
             }
-            addData();
+            addData(destdrv);
+            Log.d("thebluetooth", "destdrv " + destdrv);
         }
     }
 
-    public void addData() {
+    public void addData(String dest) {
         Bundle dst = new Bundle();
         MainActivity main = (MainActivity) getActivity();
         if(extras != null) {
             count = extras.getInt("count");
+            Log.d("thebluetooth", "destdrv " +destdrv);
+            Log.d("thebluetooth", "dest " + dest);
             switch(count) {
                 case 0:
                     dst.putString("dest1", dest);
-                    main.saveData("dest1", dst);
+                    destdrv = dest;
+                    main.dest1.equals(destdrv);
                     break;
                 case 1:
                     dst.putString("dest2", ", "+dest);
@@ -157,7 +192,7 @@ public class DestinationFragment extends DialogFragment {
     DialogInterface.OnClickListener selectItemListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            dest = (String) destlist[which];
+            destdrv = (String) destlist[which];
         }
     };
 
