@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,12 +88,11 @@ public class MainActivity extends AppCompatActivity {
                         if (msg.arg1 > 0) {
                             String sbprint = (String) msg.obj;
                         Log.d(TAG, "Received data: " + sbprint + "...");
-                        if (sb.charAt(0) == '0') {
+                        if (sbprint.charAt(0) == '0') {
                             String directory = sbprint;
                             splitDirs(directory);
                         }
 
-                            sb.delete(0, sb.length());
                             break;
                 }
             }
@@ -144,13 +144,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         if (Build.VERSION.SDK_INT >= 10) {
             try {
                 final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
                 return (BluetoothSocket) m.invoke(device, MY_UUID);
             } catch (Exception e) {
                 Log.e(TAG, "Could not create Insecure RFComm Connection", e);
+                return (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
             }
         }
         return device.createRfcommSocketToServiceRecord(MY_UUID);
@@ -173,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
             btSocket = createBluetoothSocket(device);
         } catch (IOException e) {
             errorExit("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
 
         // Discovery is resource intensive.  Make sure it isn't going on

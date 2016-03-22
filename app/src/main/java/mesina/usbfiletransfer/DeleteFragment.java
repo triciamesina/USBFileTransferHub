@@ -97,9 +97,23 @@ public class DeleteFragment extends Fragment {
                         if (args == null) {
                             Toast.makeText(getActivity(), "No drive detected", Toast.LENGTH_SHORT).show();
                         } else {
-
+                                switch (src) {
+                                    case 1:
+                                        main.mConnectedThread.write("E"); // set usb1 as source
+                                        break;
+                                    case 2:
+                                        main.mConnectedThread.write("F"); // set usb2 as source
+                                        break;
+                                    case 3:
+                                        main.mConnectedThread.write("G"); // set usb3 as source
+                                        break;
+                                    default:
+                                        main.mConnectedThread.write("H"); // set usb4 as source
+                                        break;
+                                }
                             Bundle source = new Bundle();
                             source.putInt("src", src);
+                            args.putInt("src", src);
                             args.putInt("ope", DELETE_FRAGMENT);
                             main.saveData("source", source);
                             ChooseFragment directoryFragment = new ChooseFragment();
@@ -137,7 +151,7 @@ public class DeleteFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         int size = deleteList.size();
-                        if (size <= 1) {
+                        if (size < 1) {
                             Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();

@@ -94,6 +94,7 @@ public class ChooseFragment extends Fragment {
                                     replace(R.id.fragment_container, fragment).commit();
                             break;
                         case 1: // delete operation
+                            main.mConnectedThread.write("A");
                             extras.putString("delete", selectedFile);
                             main.saveData("delete", extras);
                             DeleteFragment deleteFragment = new DeleteFragment();
