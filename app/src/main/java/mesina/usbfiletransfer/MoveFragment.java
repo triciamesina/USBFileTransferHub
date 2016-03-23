@@ -14,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -99,34 +101,6 @@ public class MoveFragment extends Fragment {
 
         destLabel1.setText("Choose destinations");
         final String[] finalDest = {new String()};
-        h = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-
-                switch (msg.what) {
-
-                    case DEST1_CHOSEN:
-                        destLabel1.setText(main.dest1);
-                        finalDest[0] = main.dest1;
-                        break;
-                    case DEST2_CHOSEN:
-                        destLabel2.setText(main.dest2);
-                        finalDest[0] = main.dest1 + main.dest2;
-                        break;
-                    case DEST3_CHOSEN:
-                        destLabel3.setText(main.dest3);
-                        finalDest[0] = main.dest1 + main.dest2+ main.dest3;
-                        break;
-                    case RESET_DATA:
-                        selectedFile = " ";
-                        main.src = 0;
-                        main.dest1 = " ";
-                        main.dest2 = " ";
-                        main.dest3 = " ";
-                        count = 0;
-                }
-
-            }
-        };
 
         // Setup Spinner
         Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
@@ -215,7 +189,7 @@ public class MoveFragment extends Fragment {
                 if (selectedFile == " ") {
                     Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (count < 3) {
+                    if (main.dest3 == " ") {
                         Dialog destination = destinationDialog();
                         destination.show();
                     } else {
@@ -285,6 +259,35 @@ public class MoveFragment extends Fragment {
             }
         });
 
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+
+                switch (msg.what) {
+
+                    case DEST1_CHOSEN:
+                        destLabel1.setText(main.dest1);
+                        finalDest[0] = main.dest1;
+                        break;
+                    case DEST2_CHOSEN:
+                        destLabel2.setText(main.dest2);
+                        finalDest[0] = main.dest1 + main.dest2;
+                        break;
+                    case DEST3_CHOSEN:
+                        destLabel3.setText(main.dest3);
+                        finalDest[0] = main.dest1 + main.dest2+ main.dest3;
+                        break;
+                    case RESET_DATA:
+                        selectedFile = " ";
+                        main.src = 0;
+                        main.dest1 = " ";
+                        main.dest2 = " ";
+                        main.dest3 = " ";
+                        count = 0;
+                }
+
+            }
+        };
+
         // Setup Floating Action Button
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +329,6 @@ public class MoveFragment extends Fragment {
         CharSequence[] usb3 = new CharSequence[]{"USB1", "USB2", "USB4"};
         CharSequence[] usb4 = new CharSequence[]{"USB1", "USB2", "USB3"};
         CharSequence[] destlist = new CharSequence[]{""};
-
         destination.setTitle("Choose a destination");
         switch (main.src) {
             case 1:
@@ -407,6 +409,7 @@ public class MoveFragment extends Fragment {
     }
 
     private void addData() {
+        Log.d(TAG, "addData count: " + count);
         MainActivity main = (MainActivity) getActivity();
         switch (count) {
             case 0:
@@ -417,10 +420,13 @@ public class MoveFragment extends Fragment {
                 main.dest2 = d;
                 h.obtainMessage(DEST2_CHOSEN).sendToTarget();
                 break;
-            default:
+            case 2:
                 main.dest3 = d;
                 h.obtainMessage(DEST3_CHOSEN).sendToTarget();
                 break;
+            default:
+                Toast.makeText(getActivity(), "Maximum of three destinations", Toast.LENGTH_SHORT).show();
+                return;
         }
         switch (d) {
             case "USB1":
@@ -438,5 +444,6 @@ public class MoveFragment extends Fragment {
         }
         count++;
     }
+
 
 }

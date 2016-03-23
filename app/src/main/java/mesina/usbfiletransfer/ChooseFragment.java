@@ -78,26 +78,25 @@ public class ChooseFragment extends Fragment {
                 @Override
                 public void onItemClick(View view, int position) {
 
-                    String selectedFile = dirFiles.get(position);
+                    String selected = dirFiles.get(position);
+                    main.selectedFile = selected;
                     main.mConnectedThread.write(String.valueOf(position));
                     main.mConnectedThread.write("-");
-                    Toast.makeText(getActivity(), selectedFile + " selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), selected + " selected", Toast.LENGTH_SHORT).show();
                     Bundle extras = new Bundle();
                     MainActivity main = (MainActivity) getActivity();
                     switch (ope) {
                         case 0: // paste/move operation
-                            extras.putString("selected", selectedFile);
-                            main.saveData("selected", extras);
                             PasteFragment fragment = new PasteFragment();
                             // fragment.setArguments(extras);
                             getFragmentManager().beginTransaction().
                                     replace(R.id.fragment_container, fragment).commit();
                             break;
                         case 1: // delete operation
-                            main.mConnectedThread.write("A");
-                            extras.putString("delete", selectedFile);
+                            extras.putString("delete", selected);
                             main.saveData("delete", extras);
                             DeleteFragment deleteFragment = new DeleteFragment();
+                            deleteFragment.setArguments(extras);
                             getFragmentManager().beginTransaction().
                                     replace(R.id.fragment_container, deleteFragment).commit();
                     }

@@ -2,6 +2,8 @@ package mesina.usbfiletransfer;
 
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -47,6 +49,17 @@ public class DeleteFragment extends Fragment {
         main.setActionBarTitle("Delete files");
 
         deleteList = main.getDeleteList();
+        Bundle chosen = this.getArguments();
+        if (chosen != null) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    main.mConnectedThread.write("A");
+                }
+            }, 1000);
+        }
 
         // Setup Spinner
         final Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
@@ -156,6 +169,7 @@ public class DeleteFragment extends Fragment {
                         } else {
                             Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
                             main.mConnectedThread.write("q");
+                            main.selectedFile = " ";
                             MainFragment home = new MainFragment();
                             getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.deleteList.clear();
@@ -168,16 +182,5 @@ public class DeleteFragment extends Fragment {
         return rootView;
     }
 
-
-    //private Communicator comm = (Communicator) getActivity();
-
-
-/*
-    public interface Communicator {
-
-       void respond2(String data2);
-
-    }
-    */
 
 }
