@@ -45,7 +45,7 @@ public class ChooseFragment extends Fragment {
         ope = extras.getInt("ope");
         int s = extras.getInt("src");
      //   dirFiles = extras.getStringArrayList("directory");
-        switch(s) {
+        switch(main.src) {
             case 1:
                 dirFiles = main.usb1List;
                 break;

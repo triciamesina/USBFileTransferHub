@@ -2,12 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mesina.usbfiletransfer.DestinationFragment">
+    android:layout_marginTop="?actionBarSize"
+    tools:context="mesina.usbfiletransfer.DirectoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/viewRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:scrollbars="vertical"
+        android:layout_alignParentBottom="true" />
+
 
 </FrameLayout>

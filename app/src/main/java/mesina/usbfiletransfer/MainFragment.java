@@ -44,6 +44,7 @@ public class MainFragment extends Fragment {
         final DeleteFragment deleteFragment = new DeleteFragment();
         final RenameFragment renameFragment = new RenameFragment();
         final MoveFragment moveFragment = new MoveFragment();
+        final TabFragment tabFragment = new TabFragment();
 
         // Paste Button
         RelativeLayout pasteLayout = (RelativeLayout) rootView.findViewById(R.id.pasteLayout);
@@ -54,8 +55,6 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 MainActivity main = (MainActivity) getActivity();
                 main.mConnectedThread.write("D");
-                title.putString("title", "Paste files");
-                pasteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).addToBackStack(null).commit();
             }
         });
@@ -69,8 +68,6 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                title.putString("title", "Move files");
-                pasteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, moveFragment).addToBackStack(null).commit();
             }
         });
@@ -84,8 +81,6 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                title.putString("title", "Delete files");
-                deleteFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, deleteFragment).addToBackStack(null).commit();
             }
         });
@@ -100,12 +95,22 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
                 main.mConnectedThread.write("r");
-                title.putString("title", "Rename files");
-                renameFragment.setArguments(title);
                 fm.beginTransaction().replace(R.id.fragment_container, renameFragment).addToBackStack(null).commit();
             }
         });
 
+        // View Button
+        RelativeLayout viewLayout = (RelativeLayout) rootView.findViewById(R.id.viewLayout);
+        //   FloatingActionButton renameButton = (FloatingActionButton) rootView.findViewById(R.id.renameButton);
+        //    assert renameButton != null;
+        viewLayout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                main.mConnectedThread.write("D");
+                fm.beginTransaction().replace(R.id.fragment_container, tabFragment).addToBackStack(null).commit();
+            }
+        });
 
         return rootView;
 

@@ -2,6 +2,7 @@ package mesina.usbfiletransfer;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -296,11 +297,9 @@ public class PasteFragment extends Fragment {
                         } else {
                             main.mConnectedThread.write("i"); // start paste
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                            MainFragment home = new MainFragment();
-                 //           LoadingDialog loading = new LoadingDialog();
-               //             FragmentManager fm = getFragmentManager();
-             //               loading.show(fm, "loading");
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                      //      MainFragment home = new MainFragment();
+                            main.showLoading();
+                    //        getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.arrayList.clear();
                             main.arrayList.add(new selection("Selected files", "Destinations"));
                         }
@@ -369,9 +368,10 @@ public class PasteFragment extends Fragment {
 
         MainActivity main = (MainActivity) getActivity();
         ArrayList<String> dir = main.checkSame(d);
+        Log.d(TAG, "fn: "+filename);
         if (dir!=null) {
             for (int i=0; i<dir.size();i++) {
-
+                Log.d(TAG, "searching: " + dir.get(i));
                 if(dir.get(i).equals(filename) || dir.get(i).equals(filename.toLowerCase())) {
                     Dialog overwrite = overWrite();
                     overwrite.show();

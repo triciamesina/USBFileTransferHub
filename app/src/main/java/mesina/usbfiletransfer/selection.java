@@ -58,25 +58,5 @@ public class selection implements Parcelable {
         mFilename = in.readString();
         mDestination = in.readString();
     }
-/*
-    public static ArrayList<selection> createSelectedList() {
 
-        ArrayList<selection> selection = new ArrayList<selection>();
-
-        Context applicationContext = PasteActivity.getContextOfApplication();
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext);
-        String files = sharedPref.getString("selection", "No File Selected");
-        ArrayList<String> filename = new ArrayList<String>(Arrays.asList(files.split(",")));
-
-        String dests = sharedPref.getString("destination", "Destination");
-        ArrayList<String> destination = new ArrayList<String>(Arrays.asList(dests.split(",")));
-
-        for (int i = 0; i<filename.size(); i++) {
-
-            selection.add(new selection(filename.get(i), destination.get(i)));
-        }
-
-        return selection;
-    }
-    */
 }

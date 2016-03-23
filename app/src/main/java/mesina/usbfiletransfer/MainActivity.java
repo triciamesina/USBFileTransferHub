@@ -1,13 +1,18 @@
 package mesina.usbfiletransfer;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
@@ -70,12 +75,13 @@ public class MainActivity extends AppCompatActivity {
     String usb4files = "";
     ArrayList<String> usb1List, usb2List, usb3List, usb4List;
     String oldName = " ";
+    MainFragment home = new MainFragment();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         h = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
@@ -92,10 +98,11 @@ public class MainActivity extends AppCompatActivity {
                         if (sbprint.charAt(0) == '0') {
                             String directory = sbprint;
                             splitDirs(directory);
+                            updateDirs();
                         } else if (sbprint.charAt(0) == '*') {
-                            MainFragment home = new MainFragment();
-                            getSupportFragmentManager().beginTransaction().
-                                    replace(R.id.fragment_container, home).commit();
+                            String time = sbprint.substring(1);
+                            doneLoading();
+                            showDone(time);
                         }
 
                             break;
@@ -113,11 +120,26 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MainFragment fragment = new MainFragment();
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        fm.beginTransaction().replace(R.id.fragment_container, home).commit();
         selection initial = new selection("Selected files", "Destinations");
         arrayList.add(initial);
+        if (usb1files != null) {
+            usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
+        }
+        if (usb2files != null) {
+            usb2List = new ArrayList<String>(Arrays.asList(usb2files.split(" ")));
+        }
+        if (usb3files != null) {
+            usb3List = new ArrayList<String>(Arrays.asList(usb3files.split(" ")));
+        }
+        if (usb4files != null) {
+            usb4List = new ArrayList<String>(Arrays.asList(usb4files.split(" ")));
+        }
+    }
+
+    private void updateDirs() {
+
         if (usb1files != null) {
             usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
         }
@@ -136,9 +158,11 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> dirarray = new ArrayList<> (Arrays.asList(directory.split(",")));
         if (dirarray.size() >= 0) {
             usb1files = dirarray.get(0);
+            Log.d(TAG, "usb1files" + usb1files);
         }
         if (dirarray.size() > 1) {
             usb2files = dirarray.get(1);
+            Log.d(TAG, "usb2files" + usb2files);
         }
         if (dirarray.size() > 2) {
             usb3files = dirarray.get(2);
@@ -470,6 +494,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "USB2":
                 arr = usb2List;
+                Log.d(TAG, "d=USB2" + usb2files);
                 break;
             case "USB3":
                 arr = usb3List;
@@ -483,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
             String s = arr.get(i);
             String f = s.substring(s.lastIndexOf(":")+1);
             filenames.add(f);
-            Log.d(TAG + "/chek/s", usb3files);
+            Log.d(TAG + "/chek/s", s);
             Log.d(TAG+"/chek/fn", f);
         }
         return filenames;
@@ -498,4 +523,42 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.getMessage());
         }
     }
+
+    public void showLoading() {
+
+        LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
+        if (loading == null) {
+            loading = new LoadingDialog();
+            loading.setCancelable(false);
+            getSupportFragmentManager().beginTransaction().add(loading, LoadingDialog.FRAGMENT_TAG).commitAllowingStateLoss();
+        }
+    }
+
+    public void doneLoading() {
+
+        LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
+        if (loading != null) {
+            getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+        }
+
+    }
+
+    public void showDone(String time) {
+
+        AlertDialog.Builder done = new AlertDialog.Builder(this);
+        done.setTitle("Transfer done!");
+        done.setMessage("Done in " + time + " ms.");
+        done.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+            }
+        });
+        done.create();
+        done.show();
+
+    }
+
 }

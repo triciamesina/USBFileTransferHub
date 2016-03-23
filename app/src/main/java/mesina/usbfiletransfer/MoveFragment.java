@@ -296,11 +296,9 @@ public class MoveFragment extends Fragment {
                         } else {
                             main.mConnectedThread.write("j"); // start move
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                            MainFragment home = new MainFragment();
-                            //           LoadingDialog loading = new LoadingDialog();
-                            //             FragmentManager fm = getFragmentManager();
-                            //               loading.show(fm, "loading");
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                            //MainFragment home = new MainFragment();
+                            main.showLoading();
+                            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.arrayList.clear();
                             main.arrayList.add(new selection("Selected files", "Destinations"));
                         }

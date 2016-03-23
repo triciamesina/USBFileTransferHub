@@ -64,8 +64,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="75dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -135,7 +135,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="75dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp" />
 
             <TextView
@@ -184,6 +184,44 @@
                 android:id="@+id/renameLabel"
                 android:layout_toRightOf="@id/renameButton"
                 android:layout_toEndOf="@id/renameButton"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:layout_below="@+id/renameButton"
+            android:layout_alignLeft="@+id/renameButton"
+            android:layout_alignStart="@+id/renameButton"
+            android:id="@+id/viewLayout"
+            android:onClick="onClick">
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/viewButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android.support.design:fabSize="mini"
+                android:src="@drawable/ic_action_folder_tabs"
+                android:layout_gravity="center_horizontal"
+                android.support.design:backgroundTint ="@color/colorPrimary"
+                android:layout_marginLeft="75dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="75dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="View Directories"
+                android:id="@+id/viewLabel"
+                android:layout_toRightOf="@id/viewButton"
+                android:layout_toEndOf="@id/viewButton"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp" />
