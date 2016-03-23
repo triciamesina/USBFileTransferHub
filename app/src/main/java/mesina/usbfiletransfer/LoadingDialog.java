@@ -25,8 +25,11 @@ public class LoadingDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        Bundle type = this.getArguments();
         ProgressDialog dialog = new ProgressDialog(getActivity(), getTheme());
-        dialog.setTitle("Transfer started");
+        if (type != null) {
+            dialog.setTitle("Transfer started");
+        }
         dialog.setMessage("Please Wait");
         dialog.setIndeterminate(true);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

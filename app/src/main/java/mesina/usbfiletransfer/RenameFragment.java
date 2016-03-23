@@ -62,19 +62,19 @@ public class RenameFragment extends Fragment {
                 switch (source) {
                     case 1:
                         src = 1;
-                        dirfiles = main.getDirectory(src);
+                        dirfiles = main.usb1List;
                         break;
                     case 2:
                         src = 2;
-                        dirfiles = main.getDirectory(src);
+                        dirfiles = main.usb2List;
                         break;
                     case 3:
                         src = 3;
-                        dirfiles = main.getDirectory(src);
+                        dirfiles = main.usb3List;
                         break;
                     case 4:
                         src = 4;
-                        dirfiles = main.getDirectory(src);
+                        dirfiles = main.usb4List;
                         break;
                     default:
                         break;
@@ -102,9 +102,17 @@ public class RenameFragment extends Fragment {
                             case 1:
                                 main.mConnectedThread.write("E");
                                 break;
-                            default:
+                            case 2:
                                 main.mConnectedThread.write("F");
                                 break;
+                            case 3:
+                                main.mConnectedThread.write("G");
+                                break;
+                            case 4:
+                                main.mConnectedThread.write("H");
+                                break;
+                            default:
+                                Toast.makeText(getActivity(), "Choose a drive", Toast.LENGTH_SHORT).show();
                         }
                         directoryShow = dirfiles;
                         // Directory adapter
@@ -117,7 +125,7 @@ public class RenameFragment extends Fragment {
                                 DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
                         recyclerView.addItemDecoration(itemDecoration);
                     } else {
-                        Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Choose a drive", Toast.LENGTH_SHORT).show();
                     }
                 }
         });
@@ -129,6 +137,8 @@ public class RenameFragment extends Fragment {
                 oldName = directoryShow.get(position);
                 pos = position;
                 main.mConnectedThread.write(Integer.toString(position));
+                main.mConnectedThread.write("-");
+                main.mConnectedThread.write("r");
                 Toast.makeText(getActivity(), oldName + " selected", Toast.LENGTH_SHORT).show();
                 Bundle extras = new Bundle();
                 MainActivity main = (MainActivity) getActivity();
@@ -163,9 +173,11 @@ public class RenameFragment extends Fragment {
                 if (newname.length() > 8) {
                     Toast.makeText(getActivity(), "Maximum of 8 characters!", Toast.LENGTH_SHORT).show();
                 } else {
+                    main.mConnectedThread.write(newname);
+                    main.mConnectedThread.write("-");
                     Toast.makeText(getActivity(), "File renamed to " + newname +"!", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
-                    switch (src){
+                 /*   switch (src){
                         case 1:
                             main.usb1List.set(main.usb1List.indexOf(oldName), root.concat(newname).concat(ext));
                             mAdapter.notifyItemChanged(main.usb1List.indexOf(oldName));
@@ -182,7 +194,7 @@ public class RenameFragment extends Fragment {
                             main.usb4List.set(main.usb4List.indexOf(oldName), root.concat(newname).concat(ext));
                             mAdapter.notifyItemChanged(main.usb4List.indexOf(oldName));
                             break;
-                    }
+                    }*/
                     MainFragment home = new MainFragment();
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                 }

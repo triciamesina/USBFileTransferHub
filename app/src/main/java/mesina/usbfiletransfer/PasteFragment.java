@@ -292,7 +292,7 @@ public class PasteFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         int size = arrayList.size();
-                        if (size < 1) {
+                        if (size <= 1) {
                             Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                         } else {
                             main.mConnectedThread.write("i"); // start paste

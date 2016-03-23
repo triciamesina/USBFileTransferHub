@@ -94,7 +94,6 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                main.mConnectedThread.write("r");
                 fm.beginTransaction().replace(R.id.fragment_container, renameFragment).addToBackStack(null).commit();
             }
         });
@@ -108,7 +107,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                fm.beginTransaction().replace(R.id.fragment_container, tabFragment).addToBackStack(null).commit();
+                main.loadDir();
             }
         });
 

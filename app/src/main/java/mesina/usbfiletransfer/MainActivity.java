@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                             String directory = sbprint;
                             splitDirs(directory);
                             updateDirs();
+                            dirDone();
                         } else if (sbprint.charAt(0) == '*') {
                             String time = sbprint.substring(1);
                             doneLoading();
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 btSocket.connect();
                 Log.d(TAG, "....Connection ok...");
-                Toast.makeText(getBaseContext(), "Connection ok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Connected to Hub", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 try {
                     btSocket.close();
@@ -530,6 +531,9 @@ public class MainActivity extends AppCompatActivity {
         if (loading == null) {
             loading = new LoadingDialog();
             loading.setCancelable(false);
+            Bundle type = new Bundle();
+            type.putInt("type", 0);
+            loading.setArguments(type);
             getSupportFragmentManager().beginTransaction().add(loading, LoadingDialog.FRAGMENT_TAG).commitAllowingStateLoss();
         }
     }
@@ -543,6 +547,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public void loadDir() {
+
+        LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
+        if (loading == null) {
+            loading = new LoadingDialog();
+            loading.setCancelable(false);
+            getSupportFragmentManager().beginTransaction().add(loading, LoadingDialog.FRAGMENT_TAG).commitAllowingStateLoss();
+        }
+    }
+
+
+    public void dirDone() {
+
+        LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
+        if (loading != null) {
+            TabFragment view = new TabFragment();
+            getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+        }
+
+    }
+
 
     public void showDone(String time) {
 

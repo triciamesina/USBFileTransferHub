@@ -33,7 +33,7 @@ public class DirectoryFragment extends Fragment {
         Bundle extras = this.getArguments();
         int s = extras.getInt("src");
         //   dirFiles = extras.getStringArrayList("directory");
-        switch (main.src) {
+        switch (s) {
             case 1:
                 dirFiles = main.usb1List;
                 break;
