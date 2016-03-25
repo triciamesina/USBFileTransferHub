@@ -1,11 +1,10 @@
 <resources>
-    <string name="app_name">USB File Transfer</string>
+    <string name="app_name">USB File Transfer Hub</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="action_connect">Connect</string>
     <string name="action_exit">Exit</string>
     <string name="action_back">Home</string>
+    <string name="action_rate">Rate</string>
     <string-array name="usb_list">
         <item>Choose Source</item>
         <item>USB1</item>
@@ -13,7 +12,4 @@
         <item>USB3</item>
         <item>USB4</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_home">HomeActivity</string>
 </resources>

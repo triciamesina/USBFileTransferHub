@@ -4,6 +4,7 @@ package mesina.usbfiletransfer;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,11 @@ import android.widget.RelativeLayout;
  */
 public class MainFragment extends Fragment {
 
+    private static final int PASTE_FRAGMENT = 0;
+    private static final int MOVE_FRAGMENT = 1;
+    private static final int DELETE_FRAGMENT = 2;
+    private static final int RENAME_FRAGMENT = 3;
+    private static final int TAB_FRAGMENT = 4;
 
     public MainFragment() {
         // Required empty public constructor
@@ -53,9 +59,17 @@ public class MainFragment extends Fragment {
         pasteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity main = (MainActivity) getActivity();
                 main.mConnectedThread.write("D");
-                fm.beginTransaction().replace(R.id.fragment_container, pasteFragment).addToBackStack(null).commit();
+                main.open = PASTE_FRAGMENT;
+                main.loadDir();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        main.noDetect();
+                    }
+                }, 5000);
             }
         });
 
@@ -68,7 +82,16 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                fm.beginTransaction().replace(R.id.fragment_container, moveFragment).addToBackStack(null).commit();
+                main.open = MOVE_FRAGMENT;
+                main.loadDir();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        main.noDetect();
+                    }
+                }, 5000);
             }
         });
 
@@ -81,7 +104,16 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
-                fm.beginTransaction().replace(R.id.fragment_container, deleteFragment).addToBackStack(null).commit();
+                main.open = DELETE_FRAGMENT;
+                main.loadDir();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        main.noDetect();
+                    }
+                }, 5000);
             }
         });
 
@@ -90,16 +122,24 @@ public class MainFragment extends Fragment {
      //   FloatingActionButton renameButton = (FloatingActionButton) rootView.findViewById(R.id.renameButton);
     //    assert renameButton != null;
         renameLayout.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                main.mConnectedThread.write("D");
+                                                main.open = RENAME_FRAGMENT;
+                                                main.loadDir();
+                                                final Handler handler = new Handler();
+                                                handler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        // Do something after 5s = 5000ms
+                                                        main.noDetect();
+                                                    }
+                                                }, 5000);
+                                            }
+                                        });
 
-            @Override
-            public void onClick(View v) {
-                main.mConnectedThread.write("D");
-                fm.beginTransaction().replace(R.id.fragment_container, renameFragment).addToBackStack(null).commit();
-            }
-        });
-
-        // View Button
-        RelativeLayout viewLayout = (RelativeLayout) rootView.findViewById(R.id.viewLayout);
+                // View Button
+                RelativeLayout viewLayout = (RelativeLayout) rootView.findViewById(R.id.viewLayout);
         //   FloatingActionButton renameButton = (FloatingActionButton) rootView.findViewById(R.id.renameButton);
         //    assert renameButton != null;
         viewLayout.setOnClickListener(new View.OnClickListener() {
@@ -107,12 +147,38 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
+                main.open = TAB_FRAGMENT;
                 main.loadDir();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        main.noDetect();
+                    }
+                }, 5000);
             }
         });
 
         return rootView;
 
     }
+
+    View.OnClickListener homelistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final MainActivity main = (MainActivity) getActivity();
+            main.mConnectedThread.write("D");
+            main.loadDir();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    main.noDetect();
+                }
+            }, 2000);
+        }
+    };
 
 }

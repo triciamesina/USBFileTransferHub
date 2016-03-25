@@ -36,6 +36,7 @@ public class MoveFragment extends Fragment {
     private static final int RESET_DATA = 3;
     private static final String TAG = "thebluetooth";
     public static int PASTE_FRAGMENT = 0;
+    public static int MOVE_FRAGMENT = 1;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<selection> arrayList;
     ArrayList<String> dirfiles;
@@ -221,7 +222,7 @@ public class MoveFragment extends Fragment {
                 int size = main.arrayList.size();
                 main.arrayList.clear();
                 mAdapter.notifyItemRangeRemoved(0, size);
-                main.arrayList.add(new selection("Selected files", "Destinations"));
+                main.arrayList.add(new selection("List of Selected files", "Destinations"));
                 mAdapter.notifyItemInserted(0);
                 selectLabel.setText("Select a file");
                 destLabel1.setText("Choose destinations");
@@ -303,6 +304,7 @@ public class MoveFragment extends Fragment {
                             main.mConnectedThread.write("j"); // start move
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
                             //MainFragment home = new MainFragment();
+                            main.selectedFile = " ";
                             main.showLoading();
                             //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.arrayList.clear();

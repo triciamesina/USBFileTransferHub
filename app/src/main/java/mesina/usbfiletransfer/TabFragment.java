@@ -18,6 +18,8 @@ import android.view.ViewGroup;
  */
 public class TabFragment extends Fragment {
 
+    public static int TAB_FRAGMENT = 4;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

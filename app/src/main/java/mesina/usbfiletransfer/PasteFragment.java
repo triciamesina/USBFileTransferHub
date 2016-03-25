@@ -2,7 +2,6 @@ package mesina.usbfiletransfer;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,6 +33,7 @@ public class PasteFragment extends Fragment {
     private static final int DEST1_CHOSEN = 0;
     private static final int DEST2_CHOSEN = 1;
     private static final int DEST3_CHOSEN = 2;
+    private static final int RESET_DATA = 3;
     private static final String TAG = "thebluetooth";
     public static int PASTE_FRAGMENT = 0;
     RecyclerView.LayoutManager layoutManager;
@@ -54,16 +56,16 @@ public class PasteFragment extends Fragment {
         super.onCreate(savedInstanceState);
         MainActivity main = (MainActivity) getActivity();
         Bundle fromActivity = main.getSavedData();
-      //  Bundle fromHome = this.getArguments();
-   //     String title = fromHome.getString("title");
+        //  Bundle fromHome = this.getArguments();
+        //     String title = fromHome.getString("title");
         arrayList = fromActivity.getParcelableArrayList("list");
         Bundle destinations = main.getDestinations();
         main.setActionBarTitle("Paste files");
-      //  if (destinations != null) {
+        //  if (destinations != null) {
         //    dest1 = main.dest1;
-           // dest2 = main.dest2;
-           // dest3 = main.dest3;
-       // }
+        // dest2 = main.dest2;
+        // dest3 = main.dest3;
+        // }
         selectedFile = main.selectedFile;
         if (selectedFile != " ") {
             filename = selectedFile.substring(selectedFile.lastIndexOf(":")+1);
@@ -83,6 +85,22 @@ public class PasteFragment extends Fragment {
 
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_paste, container, false);
+
+
+        // Setup Selected Text Label
+        final TextView selectLabel = (TextView) rootView.findViewById(R.id.selectedFile);
+        //  Bundle select = this.getArguments();
+        // Setup Destination Text Label
+        final TextView destLabel1 = (TextView) rootView.findViewById(R.id.destLabel);
+        final TextView destLabel2 = (TextView) rootView.findViewById(R.id.desttextView2);
+        final TextView destLabel3 = (TextView) rootView.findViewById(R.id.desttextView3);
+
+        if (main.selectedFile != " ") {
+            selectLabel.setText(selectedFile);
+        }
+
+        destLabel1.setText("Choose destinations");
+        final String[] finalDest = {new String()};
 
         // Setup Spinner
         Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
@@ -122,59 +140,59 @@ public class PasteFragment extends Fragment {
         // Setup Choose Button
         final Button chooseButton = (Button) rootView.findViewById(R.id.chooseButton);
         assert chooseButton != null;
-                chooseButton.setOnClickListener(new View.OnClickListener() {
+        chooseButton.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
-                        if (arrayList.size() < 15) {
-                            Bundle args = new Bundle();
-                            args.putStringArrayList("directory", dirfiles);
-                                if (main.src != 0) {
-                                        switch (main.src) {
-                                            case 1:
-                                                main.mConnectedThread.write("E"); // set usb1 as source
-                                                break;
-                                            case 2:
-                                                main.mConnectedThread.write("F"); // set usb2 as source
-                                                break;
-                                            case 3:
-                                                main.mConnectedThread.write("G"); // set usb3 as source
-                                                break;
-                                            default:
-                                                main.mConnectedThread.write("H"); // set usb4 as source
-                                                break;
+            @Override
+            public void onClick(View v) {
+                if (arrayList.size() < 15) {
+                    Bundle args = new Bundle();
+                    args.putStringArrayList("directory", dirfiles);
+                    if (main.src != 0) {
+                        switch (main.src) {
+                            case 1:
+                                main.mConnectedThread.write("E"); // set usb1 as source
+                                break;
+                            case 2:
+                                main.mConnectedThread.write("F"); // set usb2 as source
+                                break;
+                            case 3:
+                                main.mConnectedThread.write("G"); // set usb3 as source
+                                break;
+                            default:
+                                main.mConnectedThread.write("H"); // set usb4 as source
+                                break;
 
-                                        }
-                                        args.putInt("src", src);
-                                        args.putInt("ope", PASTE_FRAGMENT);
-                                        ChooseFragment directoryFragment = new ChooseFragment();
-                                        directoryFragment.setArguments(args);
-                                        FragmentManager fm = getFragmentManager();
-                                        fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
-                                } else {
-                                    Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
                         }
+                        args.putInt("src", src);
+                        args.putInt("ope", PASTE_FRAGMENT);
+                        ChooseFragment directoryFragment = new ChooseFragment();
+                        directoryFragment.setArguments(args);
+                        FragmentManager fm = getFragmentManager();
+                        fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
+                    } else {
+                        Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
                     }
-                });
+                } else {
+                    Toast.makeText(getActivity(), "Selection list is full!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // Setup Destination Button
         final Button destButton = (Button) rootView.findViewById(R.id.addDestButton);
         assert destButton != null;
-        final int finalCount = count;
         destButton.setOnClickListener(new View.OnClickListener() {
             @Nullable
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "newcount: " + count);
                 if (selectedFile == " ") {
                     Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (finalCount == 1 || finalCount == 2 || finalCount == 0) {
+                    if (main.dest3 == " ") {
                         Dialog destination = destinationDialog();
                         destination.show();
-                        } else {
+                    } else {
                         Toast.makeText(getActivity(), "Maximum number of destinations exceeded", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -194,20 +212,6 @@ public class PasteFragment extends Fragment {
             recyclerView.addItemDecoration(itemDecoration);
         }
 
-        // Setup Selected Text Label
-        final TextView selectLabel = (TextView) rootView.findViewById(R.id.selectedFile);
-        //  Bundle select = this.getArguments();
-        // Setup Destination Text Label
-        final TextView destLabel1 = (TextView) rootView.findViewById(R.id.destLabel);
-        final TextView destLabel2 = (TextView) rootView.findViewById(R.id.desttextView2);
-        final TextView destLabel3 = (TextView) rootView.findViewById(R.id.desttextView3);
-
-        if (selectedFile != " ") {
-            selectLabel.setText(selectedFile);
-        }
-
-            destLabel1.setText("Choose destinations");
-
         // Setup Clear Button
         final Button clearButton = (Button) rootView.findViewById(R.id.clearButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +221,7 @@ public class PasteFragment extends Fragment {
                 int size = main.arrayList.size();
                 main.arrayList.clear();
                 mAdapter.notifyItemRangeRemoved(0, size);
-                main.arrayList.add(new selection("Selected files", "Destinations"));
+                main.arrayList.add(new selection("List of Selected files", "Destinations"));
                 mAdapter.notifyItemInserted(0);
                 selectLabel.setText("Select a file");
                 destLabel1.setText("Choose destinations");
@@ -229,31 +233,6 @@ public class PasteFragment extends Fragment {
                 main.resetData();
             }
         });
-
-        final String[] finalDest = {new String()};
-        h = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-
-                switch (msg.what) {
-
-                    case DEST1_CHOSEN:
-                        destLabel1.setText(main.dest1);
-                        finalDest[0] = main.dest1;
-                        break;
-                    case DEST2_CHOSEN:
-                        destLabel2.setText(main.dest2);
-                        finalDest[0] = main.dest1 + main.dest2;
-                        break;
-                    case DEST3_CHOSEN:
-                        destLabel3.setText(main.dest3);
-                        finalDest[0] = main.dest1 + main.dest2+ main.dest3;
-                        break;
-
-                }
-
-            }
-        };
-
 
         // Setup Add Button
         final Button addButton = (Button) rootView.findViewById(R.id.addButton);
@@ -275,13 +254,39 @@ public class PasteFragment extends Fragment {
                     destLabel1.setText("Choose destinations");
                     destLabel2.setText(" ");
                     destLabel3.setText(" ");
-                    Bundle reset = new Bundle();
-                    reset.putString("selected", "");
-                  //  main.addToList(addtolist);
-                    main.resetData();
+                    h.obtainMessage(RESET_DATA).sendToTarget();
                 }
             }
         });
+
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+
+                switch (msg.what) {
+
+                    case DEST1_CHOSEN:
+                        destLabel1.setText(main.dest1);
+                        finalDest[0] = main.dest1;
+                        break;
+                    case DEST2_CHOSEN:
+                        destLabel2.setText(main.dest2);
+                        finalDest[0] = main.dest1 + main.dest2;
+                        break;
+                    case DEST3_CHOSEN:
+                        destLabel3.setText(main.dest3);
+                        finalDest[0] = main.dest1 + main.dest2+ main.dest3;
+                        break;
+                    case RESET_DATA:
+                        selectedFile = " ";
+                        main.src = 0;
+                        main.dest1 = " ";
+                        main.dest2 = " ";
+                        main.dest3 = " ";
+                        count = 0;
+                }
+
+            }
+        };
 
         // Setup Floating Action Button
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -297,9 +302,10 @@ public class PasteFragment extends Fragment {
                         } else {
                             main.mConnectedThread.write("i"); // start paste
                             Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                      //      MainFragment home = new MainFragment();
+                            //MainFragment home = new MainFragment();
+                            main.selectedFile = " ";
                             main.showLoading();
-                    //        getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                             main.arrayList.clear();
                             main.arrayList.add(new selection("Selected files", "Destinations"));
                         }
@@ -324,7 +330,6 @@ public class PasteFragment extends Fragment {
         CharSequence[] usb3 = new CharSequence[]{"USB1", "USB2", "USB4"};
         CharSequence[] usb4 = new CharSequence[]{"USB1", "USB2", "USB3"};
         CharSequence[] destlist = new CharSequence[]{""};
-
         destination.setTitle("Choose a destination");
         switch (main.src) {
             case 1:
@@ -368,10 +373,9 @@ public class PasteFragment extends Fragment {
 
         MainActivity main = (MainActivity) getActivity();
         ArrayList<String> dir = main.checkSame(d);
-        Log.d(TAG, "fn: "+filename);
         if (dir!=null) {
             for (int i=0; i<dir.size();i++) {
-                Log.d(TAG, "searching: " + dir.get(i));
+
                 if(dir.get(i).equals(filename) || dir.get(i).equals(filename.toLowerCase())) {
                     Dialog overwrite = overWrite();
                     overwrite.show();
@@ -406,6 +410,7 @@ public class PasteFragment extends Fragment {
     }
 
     private void addData() {
+        Log.d(TAG, "addData count: " + count);
         MainActivity main = (MainActivity) getActivity();
         switch (count) {
             case 0:
@@ -416,10 +421,13 @@ public class PasteFragment extends Fragment {
                 main.dest2 = d;
                 h.obtainMessage(DEST2_CHOSEN).sendToTarget();
                 break;
-            default:
+            case 2:
                 main.dest3 = d;
                 h.obtainMessage(DEST3_CHOSEN).sendToTarget();
                 break;
+            default:
+                Toast.makeText(getActivity(), "Maximum of three destinations", Toast.LENGTH_SHORT).show();
+                return;
         }
         switch (d) {
             case "USB1":
@@ -437,5 +445,6 @@ public class PasteFragment extends Fragment {
         }
         count++;
     }
+
 
 }

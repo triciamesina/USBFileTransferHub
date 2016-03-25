@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,10 +37,16 @@ public class MainActivity extends AppCompatActivity {
     //bluetooth
 
     private static final String TAG = "thebluetooth";
+    private static final int PASTE_FRAGMENT = 0;
+    private static final int MOVE_FRAGMENT = 1;
+    private static final int DELETE_FRAGMENT = 2;
+    private static final int RENAME_FRAGMENT = 3;
+    private static final int TAB_FRAGMENT = 4;
 
     private String myString;
     private String mylist;
     Handler h;
+    int open;
 
     final int RECIEVE_MESSAGE = 1;        // Status  for Handler
     private BluetoothAdapter btAdapter = null;
@@ -65,9 +72,6 @@ public class MainActivity extends AppCompatActivity {
     int src = 0;
     ArrayList<selection> arrayList = new ArrayList<>();
     ArrayList<String> deleteList = new ArrayList<>();
-    public static int PASTE_FRAGMENT = 0;
-    public static int CHOOSE_FRAGMENT = 1;
-    public static int DESTINATION_FRAGMENT = 2;
     String usb1files = "";
    // String usb1files = "";
     String usb2files = "";
@@ -341,8 +345,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     public void onBackPressed() {
 
@@ -375,6 +377,71 @@ public class MainActivity extends AppCompatActivity {
             arrayList.add(new selection("Selected Files", "Destinations"));
             MainFragment home = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+            return true;
+        } else if (id == R.id.action_rate) {
+            Intent rate = new Intent(android.content.Intent.ACTION_VIEW);
+            rate.setData(Uri.parse("https://docs.google.com/forms/d/11ggmce9-PLmPTjgdTKCBvIMXdfiQ9eU_Ia-Q3YyXo0g/viewform"));
+            startActivity(rate);
+            return true;
+        } else if (id == R.id.action_connect) {
+            if (!btSocket.isConnected()) {
+                Log.d(TAG, "Connect button pressed");
+                Toast.makeText(MainActivity.this, "Connecting...", Toast.LENGTH_SHORT).show();
+                // Set up a pointer to the remote node using it's address.
+                BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+                // Two things are needed to make a connection:
+                //   A MAC address, which we got above.
+                //   A Service ID or UUID.  In this case we are using the
+                //     UUID for SPP.
+                try {
+                    btSocket = createBluetoothSocket(device);
+                } catch (IOException e) {
+                    errorExit("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+                // Discovery is resource intensive.  Make sure it isn't going on
+                // when you attempt to connect and pass your message.
+                btAdapter.cancelDiscovery();
+
+                // Establish the connection.  This will block until it connects.
+                Log.d(TAG, "...Connecting...");
+                //    Toast.makeText(getBaseContext(), "Connected", Toast.LENGTH_SHORT).show();
+                if (!btSocket.isConnected()) {
+                    try {
+                        btSocket.connect();
+                        Log.d(TAG, "....Connection ok...");
+                        Toast.makeText(getBaseContext(), "Connected to Hub", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        try {
+                            btSocket.close();
+                            Toast.makeText(getBaseContext(), "Connection failed", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e2) {
+                            errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+                        }
+                    }
+                }
+
+                // Create a data stream so we can talk to server.
+                Log.d(TAG, "...Create Socket...");
+
+                mConnectedThread = new ConnectedThread(btSocket);
+                mConnectedThread.start();
+                mConnectedThread.write("l");
+            } else {
+                Toast.makeText(MainActivity.this, "Disconnecting", Toast.LENGTH_SHORT).show();
+                try {
+                    btSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             return true;
         }
 
@@ -504,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
                 arr = usb4List;
                 break;
         }
-        Log.d(TAG+"/chek/dest", d);
+        Log.d(TAG + "/chek/dest", d);
         for (int i = 0; i < arr.size(); i++) {
             String s = arr.get(i);
             String f = s.substring(s.lastIndexOf(":")+1);
@@ -564,12 +631,67 @@ public class MainActivity extends AppCompatActivity {
         LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
         if (loading != null) {
             TabFragment view = new TabFragment();
+            PasteFragment paste = new PasteFragment();
+            MoveFragment move = new MoveFragment();
+            DeleteFragment delete = new DeleteFragment();
+            RenameFragment rename = new RenameFragment();
             getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+            switch (open) {
+                case PASTE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();
+                    break;
+                case MOVE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).commit();
+                    break;
+                case DELETE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).commit();
+                    break;
+                case RENAME_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).commit();
+                    break;
+                case TAB_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                    break;
+                default:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                    break;
+            }
         }
 
     }
 
+    public void noDetect() {
+
+        LoadingDialog loading = (LoadingDialog) getSupportFragmentManager().findFragmentByTag(LoadingDialog.FRAGMENT_TAG);
+        TabFragment view = new TabFragment();
+        PasteFragment paste = new PasteFragment();
+        MoveFragment move = new MoveFragment();
+        DeleteFragment delete = new DeleteFragment();
+        RenameFragment rename = new RenameFragment();
+        if (loading != null) {
+            getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
+            switch (open) {
+                case PASTE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();
+                    break;
+                case MOVE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).commit();
+                    break;
+                case DELETE_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).commit();
+                    break;
+                case RENAME_FRAGMENT:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).commit();
+                    break;
+                case TAB_FRAGMENT:
+                    Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
 
     public void showDone(String time) {
 

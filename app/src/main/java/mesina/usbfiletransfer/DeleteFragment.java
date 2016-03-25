@@ -32,7 +32,7 @@ public class DeleteFragment extends Fragment {
     RecyclerView recyclerView;
     DirectoryAdapter mAdapter;
     int src = 0;
-    public static int DELETE_FRAGMENT = 1;
+    public static int DELETE_FRAGMENT = 2;
 //public Communicator comm1;
 
     public DeleteFragment() {
@@ -58,7 +58,7 @@ public class DeleteFragment extends Fragment {
                     // Do something after 5s = 5000ms
                     main.mConnectedThread.write("A");
                 }
-            }, 1000);
+            }, 500);
         }
 
         // Setup Spinner

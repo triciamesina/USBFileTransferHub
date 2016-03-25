@@ -26,7 +26,7 @@ public class ChooseFragment extends Fragment {
     private RecyclerView recyclerView;
     private DirectoryAdapter mAdapter;
     public static int PASTE_FRAGMENT = 0;
-    public static int DELETE_FRAGMENT = 1;
+    public static int DELETE_FRAGMENT = 2;
 
     public ChooseFragment() {
         // Required empty public constructor
@@ -92,7 +92,7 @@ public class ChooseFragment extends Fragment {
                             getFragmentManager().beginTransaction().
                                     replace(R.id.fragment_container, fragment).commit();
                             break;
-                        case 1: // delete operation
+                        case 2: // delete operation
                             extras.putString("delete", selected);
                             main.saveData("delete", extras);
                             DeleteFragment deleteFragment = new DeleteFragment();

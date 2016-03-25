@@ -35,7 +35,7 @@ public class RenameFragment extends Fragment {
     RecyclerView recyclerView;
     RenameAdapter mAdapter;
     int src = 0;
-    public static int RENAME_FRAGMENT = 2;
+    public static int RENAME_FRAGMENT = 3;
     String oldName;
     int pos;
 
