@@ -104,6 +104,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 main.mConnectedThread.write("D");
+                main.deleteList.add("List of files to delete");
                 main.open = DELETE_FRAGMENT;
                 main.loadDir();
                 final Handler handler = new Handler();

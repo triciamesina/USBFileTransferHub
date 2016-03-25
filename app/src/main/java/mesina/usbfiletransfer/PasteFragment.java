@@ -221,7 +221,7 @@ public class PasteFragment extends Fragment {
                 int size = main.arrayList.size();
                 main.arrayList.clear();
                 mAdapter.notifyItemRangeRemoved(0, size);
-                main.arrayList.add(new selection("List of Selected files", "Destinations"));
+                main.arrayList.add(new selection("Add files to list", "Destinations"));
                 mAdapter.notifyItemInserted(0);
                 selectLabel.setText("Select a file");
                 destLabel1.setText("Choose destinations");
@@ -243,7 +243,7 @@ public class PasteFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (finalSelectedFile == null || main.dest1 == " ") {
-                    Toast.makeText(getActivity(), "Choose a file", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "List is empty! Add files", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
                     main.mConnectedThread.write("A");
@@ -288,29 +288,18 @@ public class PasteFragment extends Fragment {
             }
         };
 
-        // Setup Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // Setup Send Button
+        Button sendButton = (Button) rootView.findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Proceed?", Snackbar.LENGTH_LONG).setAction("Yes", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int size = arrayList.size();
-                        if (size <= 1) {
-                            Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
-                        } else {
-                            main.mConnectedThread.write("i"); // start paste
-                            Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                            //MainFragment home = new MainFragment();
-                            main.selectedFile = " ";
-                            main.showLoading();
-                            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                            main.arrayList.clear();
-                            main.arrayList.add(new selection("Selected files", "Destinations"));
-                        }
-                    }
-                }).show();
+                int size = arrayList.size();
+                if (size <= 1) {
+                    Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
+                } else {
+                    Dialog confirm = confirm();
+                    confirm.show();
+                }
             }
         });
 
@@ -446,5 +435,31 @@ public class PasteFragment extends Fragment {
         count++;
     }
 
+    public Dialog confirm() {
+
+        final MainActivity main = (MainActivity) getActivity();
+        final AlertDialog.Builder proceed = new AlertDialog.Builder(getActivity());
+        proceed.setTitle("Proceed?");
+        proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    main.mConnectedThread.write("i"); // start paste
+                    Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                    //MainFragment home = new MainFragment();
+                    main.selectedFile = " ";
+                    main.showLoading();
+                    //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                    main.arrayList.clear();
+                    main.arrayList.add(new selection("Add files to list", "Destinations"));
+                }
+        });
+        proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        return proceed.create();
+    }
 
 }

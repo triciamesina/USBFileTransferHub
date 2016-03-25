@@ -8,7 +8,7 @@
 
     <RelativeLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/contents">
     <Spinner
-        android:layout_width="124dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
         android:spinnerMode="dropdown"
@@ -30,16 +30,13 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="40dp"
-        android:layout_marginEnd="40dp" />
+        android:layout_marginRight="3dp" />
     </RelativeLayout>
-    <android.support.design.widget.CoordinatorLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_delete"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
@@ -49,7 +46,19 @@
             android:divider="@color/divider"
             android:dividerHeight="2dp"
             android:background="#ffffff"
-            android:layout_gravity="center_horizontal|bottom" />
-    </android.support.design.widget.CoordinatorLayout>
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:id="@+id/delbutton"
+            android:layout_gravity="center_horizontal|bottom"
+            android:textColor="@color/white"
+            android:theme="@style/MyButton"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </FrameLayout>
 
 </LinearLayout>

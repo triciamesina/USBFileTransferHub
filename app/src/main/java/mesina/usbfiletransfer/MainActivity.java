@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fragment_container, home).commit();
-        selection initial = new selection("Selected files", "Destinations");
+        selection initial = new selection("Add files to list", "Destinations");
         arrayList.add(initial);
         if (usb1files != null) {
             usb1List = new ArrayList<String>(Arrays.asList(usb1files.split(" ")));
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
             mConnectedThread.write("k");
             resetData();
             arrayList.clear();
-            arrayList.add(new selection("Selected Files", "Destinations"));
+            arrayList.add(new selection("Add files to list", "Destinations"));
             MainFragment home = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
             return true;

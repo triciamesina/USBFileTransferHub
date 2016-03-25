@@ -1,6 +1,9 @@
 package mesina.usbfiletransfer;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -156,31 +159,47 @@ public class DeleteFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecoration);
 
         // Setup Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button delButton = (Button) rootView.findViewById(R.id.delbutton);
+        delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Proceed?", Snackbar.LENGTH_LONG).setAction("Yes", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int size = deleteList.size();
-                        if (size < 1) {
-                            Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
-                            main.mConnectedThread.write("q");
-                            main.selectedFile = " ";
-                            MainFragment home = new MainFragment();
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                            main.deleteList.clear();
-                        }
-                    }
-                }).show();
+                int size = deleteList.size();
+                if (size <= 1) {
+                    Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
+                } else {
+                    Dialog confirm = confirm();
+                    confirm.show();
+                }
             }
         });
 
         return rootView;
     }
 
+    public Dialog confirm() {
+
+        final MainActivity main = (MainActivity) getActivity();
+        final AlertDialog.Builder proceed = new AlertDialog.Builder(getActivity());
+        proceed.setTitle("Proceed?");
+        proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
+                    main.mConnectedThread.write("q");
+                    main.selectedFile = " ";
+                    dialog.dismiss();
+                    MainFragment home = new MainFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                    main.deleteList.clear();
+            }
+        });
+        proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        return proceed.create();
+    }
 
 }

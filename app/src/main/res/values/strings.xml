@@ -5,6 +5,9 @@
     <string name="action_exit">Exit</string>
     <string name="action_back">Home</string>
     <string name="action_rate">Rate</string>
+    <string name="addbutton">+ Add file to list</string>
+    <string name="clearList">- Clear List</string>
+    <string name="filetoadd">File to add:</string>
     <string-array name="usb_list">
         <item>Choose Source</item>
         <item>USB1</item>
