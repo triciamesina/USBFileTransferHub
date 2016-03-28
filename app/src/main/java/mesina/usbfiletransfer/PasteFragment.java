@@ -443,15 +443,15 @@ public class PasteFragment extends Fragment {
         proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                    main.mConnectedThread.write("i"); // start paste
-                    Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                    //MainFragment home = new MainFragment();
-                    main.selectedFile = " ";
-                    main.showLoading();
-                    //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                    main.arrayList.clear();
-                    main.arrayList.add(new selection("Add files to list", "Destinations"));
-                }
+                main.mConnectedThread.write("i"); // start paste
+                Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                //MainFragment home = new MainFragment();
+                main.selectedFile = " ";
+                main.showLoading();
+                //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                main.arrayList.clear();
+                main.arrayList.add(new selection("Add files to list", "Destinations"));
+            }
         });
         proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override

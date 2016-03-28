@@ -35,7 +35,6 @@ public class MoveFragment extends Fragment {
     private static final int DEST3_CHOSEN = 2;
     private static final int RESET_DATA = 3;
     private static final String TAG = "thebluetooth";
-    public static int PASTE_FRAGMENT = 0;
     public static int MOVE_FRAGMENT = 1;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<selection> arrayList;
@@ -165,7 +164,7 @@ public class MoveFragment extends Fragment {
 
                         }
                         args.putInt("src", src);
-                        args.putInt("ope", PASTE_FRAGMENT);
+                        args.putInt("ope", MOVE_FRAGMENT);
                         ChooseFragment directoryFragment = new ChooseFragment();
                         directoryFragment.setArguments(args);
                         FragmentManager fm = getFragmentManager();
@@ -444,14 +443,14 @@ public class MoveFragment extends Fragment {
         proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                    main.mConnectedThread.write("j"); // start move
-                    Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
-                    //MainFragment home = new MainFragment();
-                    main.selectedFile = " ";
-                    main.showLoading();
-                    //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                    main.arrayList.clear();
-                    main.arrayList.add(new selection("Add files to list", "Destinations"));
+                main.mConnectedThread.write("j"); // start move
+                Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                //MainFragment home = new MainFragment();
+                main.selectedFile = " ";
+                main.showLoading();
+                //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                main.arrayList.clear();
+                main.arrayList.add(new selection("Add files to list", "Destinations"));
             }
         });
         proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {

@@ -26,6 +26,7 @@ public class ChooseFragment extends Fragment {
     private RecyclerView recyclerView;
     private DirectoryAdapter mAdapter;
     public static int PASTE_FRAGMENT = 0;
+    public static int MOVE_FRAGMENT = 1;
     public static int DELETE_FRAGMENT = 2;
 
     public ChooseFragment() {
@@ -86,11 +87,17 @@ public class ChooseFragment extends Fragment {
                     Bundle extras = new Bundle();
                     MainActivity main = (MainActivity) getActivity();
                     switch (ope) {
-                        case 0: // paste/move operation
-                            PasteFragment fragment = new PasteFragment();
+                        case 0: // paste operation
+                            PasteFragment pasteFragment = new PasteFragment();
                             // fragment.setArguments(extras);
                             getFragmentManager().beginTransaction().
-                                    replace(R.id.fragment_container, fragment).commit();
+                                    replace(R.id.fragment_container, pasteFragment).commit();
+                            break;
+                        case 1: // move operation
+                            MoveFragment moveFragment = new MoveFragment();
+                            // fragment.setArguments(extras);
+                            getFragmentManager().beginTransaction().
+                                    replace(R.id.fragment_container, moveFragment).commit();
                             break;
                         case 2: // delete operation
                             extras.putString("delete", selected);
