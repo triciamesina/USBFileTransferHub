@@ -42,6 +42,7 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final MainActivity main = (MainActivity) getActivity();
         main.setActionBarTitle("USB File Transfer Hub");
+        main.deleteList.clear();
         final Bundle title = new Bundle();
         final FragmentManager fm = getFragmentManager();
 

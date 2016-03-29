@@ -100,8 +100,7 @@ public class ChooseFragment extends Fragment {
                                     replace(R.id.fragment_container, moveFragment).commit();
                             break;
                         case 2: // delete operation
-                            extras.putString("delete", selected);
-                            main.saveData("delete", extras);
+                            main.deleteList.add(selected);
                             DeleteFragment deleteFragment = new DeleteFragment();
                             deleteFragment.setArguments(extras);
                             getFragmentManager().beginTransaction().

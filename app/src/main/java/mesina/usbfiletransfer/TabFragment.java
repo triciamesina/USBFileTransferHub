@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 public class TabFragment extends Fragment {
 
     public static int TAB_FRAGMENT = 4;
+    public static final String TAG = "thebluetooth";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,8 @@ public class TabFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-        MainActivity main = (MainActivity) getActivity();
+        final MainActivity main = (MainActivity) getActivity();
+        main.mConnectedThread.write("E");
 
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("USB 1"));
@@ -51,6 +54,25 @@ public class TabFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                switch (tab.getPosition()) {
+                    case 0:
+                        main.src  = 1;
+                        main.mConnectedThread.write("E");
+                        break;
+                    case 1:
+                        main.src = 2;
+                        main.mConnectedThread.write("F");
+                        break;
+                    case 2:
+                        main.src = 3;
+                        main.mConnectedThread.write("G");
+                        break;
+                    case 3:
+                        main.src = 4;
+                        main.mConnectedThread.write("H");
+                        break;
+
+                }
             }
 
             @Override

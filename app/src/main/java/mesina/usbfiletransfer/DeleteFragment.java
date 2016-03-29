@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class DeleteFragment extends Fragment {
 
     private ArrayList<String> dirfiles;
-    private ArrayList<String> deleteList;
+  //  private ArrayList<String> deleteList;
     RecyclerView recyclerView;
     DirectoryAdapter mAdapter;
     int src = 0;
@@ -51,7 +51,6 @@ public class DeleteFragment extends Fragment {
         final MainActivity main = (MainActivity) getActivity();
         main.setActionBarTitle("Delete files");
 
-        deleteList = main.getDeleteList();
         Bundle chosen = this.getArguments();
         if (chosen != null) {
             final Handler handler = new Handler();
@@ -61,7 +60,7 @@ public class DeleteFragment extends Fragment {
                     // Do something after 5s = 5000ms
                     main.mConnectedThread.write("A");
                 }
-            }, 500);
+            }, 750);
         }
 
         // Setup Spinner
@@ -106,7 +105,7 @@ public class DeleteFragment extends Fragment {
             @Nullable
             @Override
             public void onClick(View v) {
-                if (deleteList.size() < 15) {
+                if (main.deleteList.size() < 15) {
                     Bundle args = new Bundle();
                     args.putStringArrayList("directory", dirfiles);
                     if (src != 0) {
@@ -149,7 +148,7 @@ public class DeleteFragment extends Fragment {
         // Get recyclerview id from layout
         recyclerView = (RecyclerView) rootView.findViewById(R.id.deleteRecyclerView);
         // Directory adapter
-        mAdapter = new DirectoryAdapter(deleteList);
+        mAdapter = new DirectoryAdapter(main.deleteList);
         // Get recyclerview layout manager
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -163,8 +162,8 @@ public class DeleteFragment extends Fragment {
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int size = deleteList.size();
-                if (size <= 1) {
+                int size = main.deleteList.size();
+                if (size < 1 || main.deleteList.get(0).equals("List of files to delete")) {
                     Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                 } else {
                     Dialog confirm = confirm();
@@ -187,10 +186,10 @@ public class DeleteFragment extends Fragment {
                     Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
                     main.mConnectedThread.write("q");
                     main.selectedFile = " ";
+                    main.deleteList.clear();
                     dialog.dismiss();
                     MainFragment home = new MainFragment();
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
-                    main.deleteList.clear();
             }
         });
         proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {

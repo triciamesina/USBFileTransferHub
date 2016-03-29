@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 
 
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
@@ -26,6 +27,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                 return true;
             }
         });
+
     }
 
     @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {

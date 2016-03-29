@@ -42,9 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int DELETE_FRAGMENT = 2;
     private static final int RENAME_FRAGMENT = 3;
     private static final int TAB_FRAGMENT = 4;
-
-    private String myString;
-    private String mylist;
     Handler h;
     int open;
 
@@ -73,10 +70,13 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<selection> arrayList = new ArrayList<>();
     ArrayList<String> deleteList = new ArrayList<>();
     String usb1files = "";
-   // String usb1files = "";
     String usb2files = "";
     String usb3files = "";
     String usb4files = "";
+   // String usb1files = "0:PDF120KB.PDF 0:PNG120KB.PNG 0:DOC120KB.DOC";
+    //String usb2files = "1:PNG50KB3.PNG 1:D50KB4.DOC 1:PDF50KB4.PDF 1:PNG50KB4.PNG 1:PNG50KB1.PNG";
+    //String usb3files = "2:D50KB3.DOC 2:PDF50KB3.PDF 2:PNG50KB3.PNG 2:PNG50KB1.PNG";
+    //String usb4files = "3:PDF50KB3.PDF 3:PDF120KB.PDF 3:D50KB2.DOC 3:PDF50KB2.PDF 3:PNG50KB2.PNG 3:PNG50KB1.PNG";
     ArrayList<String> usb1List, usb2List, usb3List, usb4List;
     String oldName = " ";
     MainFragment home = new MainFragment();
@@ -684,6 +684,10 @@ public class MainActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).commit();
                     break;
                 case TAB_FRAGMENT:
+                   /*MODIFY!!!!!!!!!!!!!!!!!*/ // MODIFY FOR TESTING!!!
+                   // getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
+                    //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                   // Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
                     Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
                     break;
                 default:
