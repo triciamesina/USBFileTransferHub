@@ -1,7 +1,9 @@
 package mesina.usbfiletransfer;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -41,10 +43,13 @@ public class DirectoryFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_directory, container, false);
         MainActivity main = (MainActivity) getActivity();
+        main.src = 0;
         Bundle extras = this.getArguments();
         s = extras.getInt("src");
+        Log.d(TAG, "from args "+ s);
+        Log.d(TAG, "source is "+ main.src);
         //   dirFiles = extras.getStringArrayList("directory");
-        switch (main.src) {
+        switch (s) {
             case 1:
                 dirFiles = main.usb1List;
                 break;
@@ -82,8 +87,6 @@ public class DirectoryFragment extends Fragment {
 
     private void createAlert(final String oldName) {
         final MainActivity main = (MainActivity) getActivity();
-        final String root = oldName.substring(0, oldName.lastIndexOf(":")+1);
-        final String ext = oldName.substring(oldName.lastIndexOf("."));
 
         AlertDialog.Builder getNewName = new AlertDialog.Builder(getActivity());
         getNewName.setTitle("Rename");
@@ -104,7 +107,7 @@ public class DirectoryFragment extends Fragment {
                 } else {
                     main.mConnectedThread.write(newname);
                     main.mConnectedThread.write("-");
-                    Toast.makeText(getActivity(), "File renamed to " + newname +"!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "File renamed to " + newname + "!", Toast.LENGTH_SHORT).show();
                     MainFragment home = new MainFragment();
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
                     alertDialog.dismiss();
@@ -122,8 +125,24 @@ public class DirectoryFragment extends Fragment {
         MainActivity main = (MainActivity) getActivity();
         Log.d(TAG, "position is" + position);
         Log.d(TAG, "directory " + main.src);
-        Log.d(TAG, "selected is " + dirFiles.get(position));
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (main.src) {
+            case 1:
+                dirFiles = main.usb1List;
+                break;
+            case 2:
+                dirFiles = main.usb2List;
+                break;
+            case 3:
+                dirFiles = main.usb3List;
+                break;
+            case 4:
+                dirFiles = main.usb4List;
+                break;
+            default:
+                dirFiles = main.usb4List;
+                break;
+        }
 
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
@@ -131,33 +150,122 @@ public class DirectoryFragment extends Fragment {
                 case (R.id.action_transfer):
                     main.mConnectedThread.write(String.valueOf(position));
                     main.mConnectedThread.write("-");
-                    main.selectedFile = dirFiles.get(position);
-                    PasteFragment paste = new PasteFragment();
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();
+                    switch (main.src) {
+                        case 1:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+                        case 2:
+                            main.selectedFile = main.usb2List.get(position);
+                            break;
+                        case 3:
+                            main.selectedFile = main.usb3List.get(position);
+                            break;
+                        case 4:
+                            main.selectedFile = main.usb4List.get(position);
+                            break;
+                        default:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+
+                    }
+                 //   main.selectedFile = dirFiles.get(position);
+                 /*   PasteFragment paste = new PasteFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();*/
+                    Log.d(TAG, "selected file " + main.selectedFile);
+                    TransferFragment transfer = new TransferFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, transfer).commit();
                     Toast.makeText(getActivity(), "Choose a destination", Toast.LENGTH_SHORT).show();
                     break;
 
                 case (R.id.action_delete):
                     main.mConnectedThread.write(String.valueOf(position));
                     main.mConnectedThread.write("-");
-                    main.deleteList.add(dirFiles.get(position));
-                    DeleteFragment delete = new DeleteFragment();
+                    main.mConnectedThread.write("A");
+                    switch (main.src) {
+                        case 1:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+                        case 2:
+                            main.selectedFile = main.usb2List.get(position);
+                            break;
+                        case 3:
+                            main.selectedFile = main.usb3List.get(position);
+                            break;
+                        case 4:
+                            main.selectedFile = main.usb4List.get(position);
+                            break;
+                        default:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+
+                    }
+                    main.deleteList.add(main.selectedFile);
+                   /* DeleteFragment delete = new DeleteFragment();
                     Bundle chosen = new Bundle();
                     chosen.putInt("file", position);
                     delete.setArguments(chosen);
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).commit();
-                    Toast.makeText(getActivity(), "Add more files", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Add more files", Toast.LENGTH_SHORT).show(); */
+                    Dialog confirm = confirm(main.selectedFile);
+                    confirm.show();
                     break;
 
                 case (R.id.action_rename):
+                    main.mConnectedThread.write(String.valueOf(position));
+                    main.mConnectedThread.write("-");
                     main.mConnectedThread.write("r");
-                    main.selectedFile = dirFiles.get(position);
+                    switch (main.src) {
+                        case 1:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+                        case 2:
+                            main.selectedFile = main.usb2List.get(position);
+                            break;
+                        case 3:
+                            main.selectedFile = main.usb3List.get(position);
+                            break;
+                        case 4:
+                            main.selectedFile = main.usb4List.get(position);
+                            break;
+                        default:
+                            main.selectedFile = main.usb1List.get(position);
+                            break;
+
+                    }
                     createAlert(main.selectedFile);
                     break;
             }
-        return true;
+            return true;
         }
         return false;
+    }
+
+
+    public Dialog confirm(String selectedfile) {
+
+        final MainActivity main = (MainActivity) getActivity();
+        final AlertDialog.Builder proceed = new AlertDialog.Builder(getActivity());
+        proceed.setTitle("Proceed?");
+        proceed.setMessage("Delete this file: " + main.selectedFile + "?");
+        proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getActivity(), "Delete Started", Toast.LENGTH_SHORT).show();
+                main.mConnectedThread.write("q");
+                main.selectedFile = " ";
+                main.deleteList.clear();
+                dialog.dismiss();
+                MainFragment home = new MainFragment();
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+            }
+        });
+        proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        return proceed.create();
     }
 
 

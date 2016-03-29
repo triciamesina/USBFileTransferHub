@@ -163,7 +163,7 @@ public class DeleteFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int size = main.deleteList.size();
-                if (size < 1 || main.deleteList.get(0).equals("List of files to delete")) {
+                if (size < 1) {
                     Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                 } else {
                     Dialog confirm = confirm();

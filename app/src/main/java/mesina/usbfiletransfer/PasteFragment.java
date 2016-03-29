@@ -290,6 +290,7 @@ public class PasteFragment extends Fragment {
 
         // Setup Send Button
         Button sendButton = (Button) rootView.findViewById(R.id.sendButton);
+        sendButton.setText("PASTE");
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

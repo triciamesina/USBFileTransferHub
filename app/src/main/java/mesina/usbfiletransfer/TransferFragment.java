@@ -36,7 +36,7 @@ public class TransferFragment extends Fragment {
     private static final int DEST3_CHOSEN = 2;
     private static final int RESET_DATA = 3;
     private static final String TAG = "thebluetooth";
-    public static int PASTE_FRAGMENT = 0;
+    public static int TRANSFER_FRAGMENT = 5;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<selection> arrayList;
     ArrayList<String> dirfiles;
@@ -61,7 +61,7 @@ public class TransferFragment extends Fragment {
         //     String title = fromHome.getString("title");
         arrayList = fromActivity.getParcelableArrayList("list");
         Bundle destinations = main.getDestinations();
-        main.setActionBarTitle("Paste files");
+        main.setActionBarTitle("Transfer files");
         //  if (destinations != null) {
         //    dest1 = main.dest1;
         // dest2 = main.dest2;
@@ -71,12 +71,6 @@ public class TransferFragment extends Fragment {
         if (selectedFile != " ") {
             filename = selectedFile.substring(selectedFile.lastIndexOf(":")+1);
         }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
@@ -171,11 +165,11 @@ public class TransferFragment extends Fragment {
 
                         }
                         args.putInt("src", src);
-                        args.putInt("ope", PASTE_FRAGMENT);
+                        args.putInt("ope", TRANSFER_FRAGMENT);
                         ChooseFragment directoryFragment = new ChooseFragment();
                         directoryFragment.setArguments(args);
                         FragmentManager fm = getFragmentManager();
-                        fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).commit();
+                        fm.beginTransaction().replace(R.id.fragment_container, directoryFragment).addToBackStack(null).commit();
                     } else {
                         Toast.makeText(getActivity(), "Choose a source drive", Toast.LENGTH_SHORT).show();
                     }
@@ -253,6 +247,7 @@ public class TransferFragment extends Fragment {
                     Toast.makeText(getActivity(), "List is empty! Add files", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), finalSelectedFile + " added!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Choose another source to add more files", Toast.LENGTH_LONG).show();
                     main.mConnectedThread.write("A");
                     selection addtolist = new selection(finalSelectedFile, finalDest[0]);
                     arrayList.add(addtolist);
@@ -304,8 +299,8 @@ public class TransferFragment extends Fragment {
                 if (size <= 1) {
                     Toast.makeText(getActivity(), "Add files", Toast.LENGTH_SHORT).show();
                 } else {
-                    Dialog confirm = confirm();
-                    confirm.show();
+                    Dialog pastemove = PasteorMove();
+                    pastemove.show();
                 }
             }
         });
@@ -344,6 +339,9 @@ public class TransferFragment extends Fragment {
             case 4:
                 destlist = usb4;
                 break;
+            default:
+                destlist = usb1;
+                break;
         }
         final CharSequence[] finalDestlist = destlist;
         destination.setSingleChoiceItems(finalDestlist, -1, new DialogInterface.OnClickListener() {
@@ -358,6 +356,7 @@ public class TransferFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 searchDir(d);
                 dialog.dismiss();
+                Toast.makeText(getActivity(), "Add this file to list", Toast.LENGTH_SHORT).show();
             }
         });
         destination.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -446,7 +445,7 @@ public class TransferFragment extends Fragment {
         count++;
     }
 
-    public Dialog confirm() {
+    public Dialog confirmpaste() {
 
         final MainActivity main = (MainActivity) getActivity();
         final AlertDialog.Builder proceed = new AlertDialog.Builder(getActivity());
@@ -471,6 +470,59 @@ public class TransferFragment extends Fragment {
             }
         });
         return proceed.create();
+    }
+
+    public Dialog confirmmove() {
+
+        final MainActivity main = (MainActivity) getActivity();
+        final AlertDialog.Builder proceed = new AlertDialog.Builder(getActivity());
+        proceed.setTitle("Proceed?");
+        proceed.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                main.mConnectedThread.write("j"); // start move
+                Toast.makeText(getActivity(), "Transfer Started", Toast.LENGTH_SHORT).show();
+                //MainFragment home = new MainFragment();
+                main.selectedFile = " ";
+                main.showLoading();
+                //getFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                main.arrayList.clear();
+                main.arrayList.add(new selection("Add files to list", "Destinations"));
+            }
+        });
+        proceed.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        return proceed.create();
+    }
+
+    public Dialog PasteorMove() {
+
+        final CharSequence[] choice = {"Paste", "Move"};
+        final AlertDialog.Builder pastemove = new AlertDialog.Builder(getActivity());
+        pastemove.setTitle("Choose action");
+        pastemove.setItems(choice, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        Dialog confirmpaste = confirmpaste();
+                        confirmpaste.show();
+                        dialog.dismiss();
+                        break;
+                    case 1:
+                        Dialog confirmmove = confirmmove();
+                        confirmmove.show();
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        });
+        return pastemove.create();
+
     }
 
 }

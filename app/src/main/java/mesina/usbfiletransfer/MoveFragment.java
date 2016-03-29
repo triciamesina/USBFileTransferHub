@@ -290,6 +290,7 @@ public class MoveFragment extends Fragment {
 
         // Setup Send Button
         Button sendButton = (Button) rootView.findViewById(R.id.sendButton);
+        sendButton.setText("MOVE");
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

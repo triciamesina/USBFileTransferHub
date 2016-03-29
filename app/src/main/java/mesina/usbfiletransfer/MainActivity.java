@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     String usb2files = "";
     String usb3files = "";
     String usb4files = "";
-   // String usb1files = "0:PDF120KB.PDF 0:PNG120KB.PNG 0:DOC120KB.DOC";
+    //String usb1files = "0:PDF120KB.PDF 0:PNG120KB.PNG 0:DOC120KB.DOC";
     //String usb2files = "1:PNG50KB3.PNG 1:D50KB4.DOC 1:PDF50KB4.PDF 1:PNG50KB4.PNG 1:PNG50KB1.PNG";
     //String usb3files = "2:D50KB3.DOC 2:PDF50KB3.PDF 2:PNG50KB3.PNG 2:PNG50KB1.PNG";
     //String usb4files = "3:PDF50KB3.PDF 3:PDF120KB.PDF 3:D50KB2.DOC 3:PDF50KB2.PDF 3:PNG50KB2.PNG 3:PNG50KB1.PNG";
@@ -449,6 +449,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
@@ -638,22 +640,22 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
             switch (open) {
                 case PASTE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).addToBackStack("main").commit();
                     break;
                 case MOVE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).addToBackStack("main").commit();
                     break;
                 case DELETE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).addToBackStack("main").commit();
                     break;
                 case RENAME_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).addToBackStack("main").commit();
                     break;
                 case TAB_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).addToBackStack("main").commit();
                     break;
                 default:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).addToBackStack("main").commit();
                     break;
             }
         }
@@ -672,23 +674,23 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
             switch (open) {
                 case PASTE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, paste).addToBackStack("main").commit();
                     break;
                 case MOVE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, move).addToBackStack("main").commit();
                     break;
                 case DELETE_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, delete).addToBackStack("main").commit();
                     break;
                 case RENAME_FRAGMENT:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, rename).addToBackStack("main").commit();
                     break;
                 case TAB_FRAGMENT:
                    /*MODIFY!!!!!!!!!!!!!!!!!*/ // MODIFY FOR TESTING!!!
-                   // getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
-                    //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).commit();
+                   getSupportFragmentManager().beginTransaction().remove(loading).commitAllowingStateLoss();
+                   getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, view).addToBackStack("main").commit();
                    // Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     Toast.makeText(MainActivity.this, "No drives detected", Toast.LENGTH_SHORT).show();

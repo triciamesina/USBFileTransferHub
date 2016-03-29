@@ -84,6 +84,7 @@ public class ChooseFragment extends Fragment {
                     main.mConnectedThread.write(String.valueOf(position));
                     main.mConnectedThread.write("-");
                     Toast.makeText(getActivity(), selected + " selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Choose the destination drive", Toast.LENGTH_SHORT).show();
                     Bundle extras = new Bundle();
                     MainActivity main = (MainActivity) getActivity();
                     switch (ope) {
@@ -105,6 +106,12 @@ public class ChooseFragment extends Fragment {
                             deleteFragment.setArguments(extras);
                             getFragmentManager().beginTransaction().
                                     replace(R.id.fragment_container, deleteFragment).commit();
+                            break;
+                        case 5:
+                            TransferFragment transferFragment = new TransferFragment();
+                            // fragment.setArguments(extras);
+                            getFragmentManager().beginTransaction().
+                                    replace(R.id.fragment_container, transferFragment).commit();
                     }
                 }
             }));
